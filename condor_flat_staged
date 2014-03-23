@@ -1,0 +1,52 @@
+#-*-shell-script-*-    Hey Emacs its a script file
+Rank           = Mips
+
+#Requirements = UidDomain == "phy.duke.edu" && \
+#               FileSystemDomain == "phy.duke.edu" && \
+#	        Mips > 10000
+
+Requirements = OpSysMajorVer == 6 && Disk >= (200 * 1024) && Mips > 10000
+
+getenv         = true
+universe       = vanilla
+log            = condor-phosim.log
+
+should_transfer_files = yes
+transfer_input_files  = /usr/bin/xz, \
+                        phosim-stage, phosim-stage.tar.xz, \
+                        sources, command-files
+
+transfer_output_files = output
+
+Executable     = phosim-stage
+OPTIONS        = -s R22_S11 -e 0 -i lsst_flats
+SOURCE_DIR     = sources
+COMMAND_DIR    = command-files
+
+SOURCE         = $(SOURCE_DIR)/$(SOURCE_FILE)
+COMMANDS       = $(COMMAND_DIR)/$(COMMAND_FILE)
+Arguments      = $(SOURCE) $(OPTIONS) -c $(COMMANDS) 
+Output         = logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
+Error          = logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
+
+COMMAND_FILE = perfect_seeing
+
+SOURCE_FILE  = flat14
+Queue
+
+SOURCE_FILE  = flat15
+Queue
+
+SOURCE_FILE  = flat18
+Queue
+
+COMMAND_FILE = dev_charge_sharing
+
+SOURCE_FILE  = flat14
+Queue
+
+SOURCE_FILE  = flat15
+Queue
+
+SOURCE_FILE  = flat18
+Queue

@@ -1,0 +1,47 @@
+#-*-shell-script-*-    Hey Emacs its a script file
+Rank           = Mips
+
+Requirements = UidDomain == "phy.duke.edu" && \
+               FileSystemDomain == "phy.duke.edu" && \
+	       Mips > 10000
+
+getenv         = true
+universe       = vanilla
+#notification   = Error
+
+log            = $(workdir)/condor-phosim.log
+
+#phosimdir = /var/phy/project/lsst/PhoSim/phosim-3.3.2
+phosimdir = /var/phy/project/lsst/PhoSim/phosim-git
+
+workdir   = /var/phy/project/lsst/PhoSim/brighter-fatter
+
+Initialdir     = $(phosimdir)
+Executable     = $(phosimdir)/phosim
+Arguments      =  $(workdir)/$(SOURCE_FILE) -s R22_S11 -e 0 -i lsst_flats -c $(workdir)/$(COMMAND_FILE) -w $(workdir)/work -o $(workdir)/output-flat
+Output         = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
+Error          = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
+
+COMMAND_FILE = perfect_seeing
+
+SOURCE_FILE  = flat14
+Queue
+
+SOURCE_FILE  = flat15
+Queue
+
+SOURCE_FILE  = flat18
+Queue
+
+#COMMAND_FILE = charge_sharing
+COMMAND_FILE = dev_charge_sharing
+#COMMAND_FILE = diffusion
+
+SOURCE_FILE  = flat14
+Queue
+
+SOURCE_FILE  = flat15
+Queue
+
+SOURCE_FILE  = flat18
+Queue

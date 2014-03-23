@@ -1,0 +1,45 @@
+# Identify this file
+extraid 2
+
+# Make a subpixel test (if pixelsize < 10.0)
+# pixelsize 0.1
+
+# Set pixel depth and parameters
+# well_depth 1000000
+blooming 0
+saturation 0
+detectormode 1
+contaminationmode 0
+
+# Turn on/off the sharing to other pixels
+chargesharing 0
+
+# Change the "perfect telescope" to get a long focal length
+# Note Phosim platescale is given in micrometers/degree.
+# Leave platescale fixed and change the diameter of the mirror
+# to change the focal length.
+telescopemode 0
+platescale 180000.0
+minr 255.8
+maxr 418.0
+
+# Turn off other effects
+diffractionmode 0
+lascatprob 0.0
+atmosphericdispersion 0
+coatingmode 0
+
+clearperturbations
+clearopacity
+clearturbulence
+cleartracking
+
+# Set the skydarkness and CR rate
+zenith_v 1000.0
+raydensity 0.0
+
+# Not needed anymore
+##trackingmode 0
+##rotationjitter 0.0
+##elevationjitter 0.0
+##azimuthjitter 0.0  

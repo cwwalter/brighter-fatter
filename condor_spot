@@ -63,11 +63,18 @@ Queue
 SOURCE_FILE = 30000e
 Queue
 
+SOURCE_FILE = 50000e
+Queue
+
+SOURCE_FILE = 75000e
+Queue
+
+SOURCE_FILE = 100000e
+Queue
+
 # Now Charge Sharing
 
-#COMMAND_FILE = charge_sharing
 COMMAND_FILE = dev_charge_sharing
-#COMMAND_FILE = diffusion 
 
 SOURCE_FILE = 1000e
 Queue
@@ -97,4 +104,13 @@ SOURCE_FILE = 25000e
 Queue
 
 SOURCE_FILE = 30000e
+Queue
+
+SOURCE_FILE = 50000e
+Queue
+
+SOURCE_FILE = 75000e
+Queue
+
+SOURCE_FILE = 100000e
 Queue

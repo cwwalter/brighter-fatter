@@ -13,12 +13,13 @@ Opsim_sunalt -90
 Opsim_filter 2
 Opsim_dist2moon 180.0
 Opsim_moonphase 10.0
-Opsim_obshistid 1000
+Opsim_obshistid 17
 Opsim_rawseeing 0.67
 SIM_SEED     1000
-SIM_MINSOURCE 1
-SIM_TELCONFIG 0
+SIM_MINSOURCE 0
+SIM_TELCONFIG 2
+SIM_DOMEINT 17.0
+SIM_DOMEWAVE 550.0
 SIM_CAMCONFIG 1
 SIM_VISTIME 15.0
 SIM_NSNAP 1
-object 0 0.0 0.0 26.410 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 star none none

@@ -21,6 +21,6 @@ SIM_TELCONFIG 0
 SIM_CAMCONFIG 1
 SIM_VISTIME 15.0
 SIM_NSNAP 1
-object 0 0.0 0.0 23.072 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 star none none
-#object 0 0.0 0.0 23.072 ../sky/sed_flat.txt 0 0 0 0 2.424e-6 4.848e-7 star none none
-#object 0 0.0 0.0 23.072 ../sky/sed_flat.txt 0 0 0 0 4.363e-6 4.848e-7 star none none
+object 0 0.0 0.0 22.718 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 star none none
+#object 0 0.0 0.0 22.718 ../sky/sed_flat.txt 0 0 0 0 7.030e-7 3.394e-6 star none none
+#object 0 0.0 0.0 22.718 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 6.302e-6 star none none

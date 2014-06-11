@@ -11,13 +11,23 @@ saturation 0
 detectormode 0
 contaminationmode 0
 
+# Do full photon-by-photon simulation
+backalpha 0
+
 # Turn on/off the sharing to other pixels
+chargediffusion 0
+pixelerror 0
+fieldanisotropy 0
 chargesharing 0
 
 # Change the "perfect telescope" to get a long focal length
 # Note Phosim platescale is given in micrometers/degree.
+# Leave platescale fixed and change the diameter of the mirror
+# to change the focal length.
 telescopemode 0
-platescale 180000.0
+#platescale 180000.0
+#minr 255.8
+#maxr 418.0
 
 # Turn off other effects
 diffractionmode 0
@@ -39,3 +49,8 @@ raydensity 0.0
 ##rotationjitter 0.0
 ##elevationjitter 0.0
 ##azimuthjitter 0.0  
+
+#atmosphericdispcenter 0
+#impurityvariation 0
+#fringing 0
+#deadlayer 0

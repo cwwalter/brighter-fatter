@@ -18,7 +18,7 @@ backalpha 0
 chargediffusion 0
 pixelerror 0
 fieldanisotropy 0
-chargesharing 0
+chargesharing 1
 
 # Change the "perfect telescope" to get a long focal length
 # Note Phosim platescale is given in micrometers/degree.

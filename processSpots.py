@@ -40,16 +40,21 @@ fields = ['centroid.naive',
           # 'shape.sdss.centroid.err',
           'shape.sdss.flags',
           'flux.gaussian']
+
+#fields = ['shape.sdss']
+    
 algoKeys   = [schema.find(f).key for f in fields]
 
 outDir       = 'output/lsst_e_'
 suffix       = '_f2_R22_S11_E000.fits.gz'
 
 numElectrons  = ['1000', '2000', '3000', '4000', '5000', 
-                 '10000', '15000', '20000', '25000', '30000']
-extraId = '2'
+                 '10000', '15000', '20000', '25000', '30000',
+                 '50000', '75000', '100000']
 
-#numElectrons  = ['10000']
+#numElectrons = ['100000']
+
+extraId = '2'
 
 for i in numElectrons:
 
@@ -86,14 +91,18 @@ for i in numElectrons:
     # Apply the measurement routines to the exposure using the sources as input
     measure.run(exposure, sources)
 
-    # Now loop through the keys we want
-    #    for f,k in zip(fields, algoKeys):
-    #        print '    ', f, source.get(k)
     
     for source in sources:
         print "Source found at ", source.getCentroid()
         x,y = source.getCentroid()
 
+        # Now loop through the keys we want
+        for f,k in zip(fields, algoKeys):
+            #print '    ', f, source.get(k)
+            if f=='shape.sdss':
+                ixx = source.get(k).getIxx()
+                iyy = source.get(k).getIyy()
+        
         # Had to add this for dev branch
         x = round (x)
         y = round (y)
@@ -109,7 +118,7 @@ for i in numElectrons:
         myaverage =  np.average(xaxis, weights=xvalues)
         variancex  = np.average((xaxis-myaverage)**2, weights=xvalues)
         stdx       = math.sqrt(variancex)
-        print "Electrons = %2d STDX = %4.3f STDY = %4.3f \n" % \
-            (int(i), stdx, stdy)
+        print "Electrons = %2d STDX = %4.3f STDY = %4.3f IXX = %4.3f IYY = %4.3f \n" % \
+            (int(i), stdx, stdy, ixx, iyy)
 
 

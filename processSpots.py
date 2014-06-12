@@ -29,9 +29,9 @@ measure = measAlg.SourceMeasurementTask(config=measureSourcesConfig,
                                         schema=schema)
 
 #  Choose algorithms to look at the output of. 
-fields = ['centroid.naive', 
+fields = [#'centroid.naive', 
           #'centroid.naive.err', 'centroid.naive.flags',
-          'centroid.gaussian', 
+          #'centroid.gaussian', 
           #'centroid.gaussian.err',
           'centroid.sdss', 
           'centroid.sdss.flags',
@@ -41,21 +41,19 @@ fields = ['centroid.naive',
           'shape.sdss.flags',
           'flux.gaussian']
 
-#fields = ['shape.sdss']
-    
 algoKeys   = [schema.find(f).key for f in fields]
 
 outDir       = 'output/lsst_e_'
 suffix       = '_f2_R22_S11_E000.fits.gz'
+extraId = '2'
 
 numElectrons  = ['1000', '2000', '3000', '4000', '5000', 
                  '10000', '15000', '20000', '25000', '30000',
                  '50000', '75000', '100000']
 
 #numElectrons = ['100000']
-
-extraId = '2'
-
+stdX = []; stdY= [];
+    
 for i in numElectrons:
 
     print "using", i
@@ -91,7 +89,6 @@ for i in numElectrons:
     # Apply the measurement routines to the exposure using the sources as input
     measure.run(exposure, sources)
 
-    
     for source in sources:
         print "Source found at ", source.getCentroid()
         x,y = source.getCentroid()
@@ -100,9 +97,12 @@ for i in numElectrons:
         for f,k in zip(fields, algoKeys):
             #print '    ', f, source.get(k)
             if f=='shape.sdss':
-                ixx = source.get(k).getIxx()
-                iyy = source.get(k).getIyy()
-        
+                ixx = math.sqrt(source.get(k).getIxx())
+                iyy = math.sqrt(source.get(k).getIyy())
+                ixy = source.get(k).getIxy()
+                stdX.append(ixx)
+                stdY.append(iyy)
+                 
         # Had to add this for dev branch
         x = round (x)
         y = round (y)
@@ -118,7 +118,20 @@ for i in numElectrons:
         myaverage =  np.average(xaxis, weights=xvalues)
         variancex  = np.average((xaxis-myaverage)**2, weights=xvalues)
         stdx       = math.sqrt(variancex)
-        print "Electrons = %2d STDX = %4.3f STDY = %4.3f IXX = %4.3f IYY = %4.3f \n" % \
-            (int(i), stdx, stdy, ixx, iyy)
+        
+        print "Electrons= %6d STDX= %4.2f STDY= %4.2f IXX= %4.2f IYY= %4.2f IXY= %4.2f\n" % \
+            (int(i), stdx, stdy, ixx, iyy, ixy)
 
 
+print "To make plot: \n"
+
+print "numElectrons =", numElectrons, "\n"
+print "stdX"+extraId, " = ", stdX, "\n"
+print "stdY"+extraId, " = ", stdY, "\n"
+
+print """
+plot(numElectrons, stdX0, "ro")
+xlabel('Number of Electrons')
+ylabel('Sigma X')
+title('Standard Deviation in X direction')
+"""

@@ -21,4 +21,6 @@ SIM_TELCONFIG 0
 SIM_CAMCONFIG 1
 SIM_VISTIME 15.0
 SIM_NSNAP 1
-object 0 0.0 0.0 23.91 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 star none none
+#object 0 0.0 0.0 23.91 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 star none none
+object 0 0.0 0.0 23.91 ../sky/sed_flat.txt 0 0 0 0 4.848e-7 4.848e-7 gauss 0.32
+

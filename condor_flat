@@ -11,18 +11,30 @@ universe       = vanilla
 
 log            = $(workdir)/condor-phosim.log
 
-#phosimdir = /var/phy/project/lsst/PhoSim/phosim-3.3.2
 phosimdir = /var/phy/project/lsst/PhoSim/phosim-git
-
-workdir   = /var/phy/project/lsst/PhoSim/brighter-fatter
+workdir   = /home/cwalter/lsst-work/brighter-fatter
 
 Initialdir     = $(phosimdir)
 Executable     = $(phosimdir)/phosim
-Arguments      =  $(workdir)/$(SOURCE_FILE) -s R22_S11 -e 0 -i lsst_flats -c $(workdir)/$(COMMAND_FILE) -w $(workdir)/work -o $(workdir)/output-flat
+
+SOURCE_DIR     = sources
+COMMAND_DIR    = command-files
+
+SOURCE         = $(workdir)/$(SOURCE_DIR)/$(SOURCE_FILE)
+OPTIONS        = -s R22_S11 -e 0 -i lsst_flats
+COMMANDS       = $(workdir)/$(COMMAND_DIR)/$(COMMAND_FILE)
+
+Arguments      = $(SOURCE) $(OPTIONS) -c $(COMMANDS) -w $(workdir)/work -o $(workdir)/output
 Output         = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 Error          = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 
 COMMAND_FILE = perfect_seeing
+
+SOURCE_FILE  = flat10
+Queue
+
+SOURCE_FILE  = flat12
+Queue
 
 SOURCE_FILE  = flat14
 Queue
@@ -33,9 +45,13 @@ Queue
 SOURCE_FILE  = flat18
 Queue
 
-#COMMAND_FILE = charge_sharing
 COMMAND_FILE = dev_charge_sharing
-#COMMAND_FILE = diffusion
+
+SOURCE_FILE  = flat10
+Queue
+
+SOURCE_FILE  = flat12
+Queue
 
 SOURCE_FILE  = flat14
 Queue

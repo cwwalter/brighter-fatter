@@ -8,11 +8,11 @@ extraid 0
 # well_depth 1000000
 blooming 0
 saturation 0
-detectormode 0
+detectormode 1
 contaminationmode 0
 
 # Do full photon-by-photon simulation
-backalpha 0
+backalpha 0.0001
 
 # Turn on/off the sharing to other pixels
 chargediffusion 0

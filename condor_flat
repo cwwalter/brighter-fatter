@@ -11,7 +11,7 @@ universe       = vanilla
 
 log            = $(workdir)/condor-phosim.log
 
-phosimdir = /var/phy/project/lsst/PhoSim/phosim-git
+phosimdir = /var/phy/project/lsst/PhoSim/sims_phosim
 workdir   = /home/cwalter/lsst-work/brighter-fatter
 
 Initialdir     = $(phosimdir)
@@ -30,34 +30,64 @@ Error          = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 
 COMMAND_FILE = perfect_seeing
 
-SOURCE_FILE  = flat10
+#SOURCE_FILE  = flat10_0
+#Queue
+
+#SOURCE_FILE  = flat10_1
+#Queue
+
+#SOURCE_FILE  = flat12_0
+#Queue
+
+#SOURCE_FILE  = flat12_1
+#Queue
+
+SOURCE_FILE  = flat14_0
 Queue
 
-SOURCE_FILE  = flat12
+SOURCE_FILE  = flat14_1
 Queue
 
-SOURCE_FILE  = flat14
+SOURCE_FILE  = flat15_0
 Queue
 
-SOURCE_FILE  = flat15
+SOURCE_FILE  = flat15_1
 Queue
 
-SOURCE_FILE  = flat18
+SOURCE_FILE  = flat18_0
+Queue
+
+SOURCE_FILE  = flat18_1
 Queue
 
 COMMAND_FILE = dev_charge_sharing
 
-SOURCE_FILE  = flat10
+#SOURCE_FILE  = flat10_0
+#Queue
+
+#SOURCE_FILE  = flat10_1
+#Queue
+
+#SOURCE_FILE  = flat12_0
+#Queue
+
+#SOURCE_FILE  = flat12_1
+#Queue
+
+SOURCE_FILE  = flat14_0
 Queue
 
-SOURCE_FILE  = flat12
+SOURCE_FILE  = flat14_1
 Queue
 
-SOURCE_FILE  = flat14
+SOURCE_FILE  = flat15_0
 Queue
 
-SOURCE_FILE  = flat15
+SOURCE_FILE  = flat15_1
 Queue
 
-SOURCE_FILE  = flat18
+SOURCE_FILE  = flat18_0
+Queue
+
+SOURCE_FILE  = flat18_1
 Queue

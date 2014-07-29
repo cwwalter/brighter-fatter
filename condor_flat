@@ -36,11 +36,17 @@ COMMAND_FILE = perfect_seeing
 #SOURCE_FILE  = flat10_1
 #Queue
 
-#SOURCE_FILE  = flat12_0
-#Queue
+SOURCE_FILE  = flat12_0
+Queue
 
-#SOURCE_FILE  = flat12_1
-#Queue
+SOURCE_FILE  = flat12_1
+Queue
+
+SOURCE_FILE  = flat13_0
+Queue
+
+SOURCE_FILE  = flat13_1
+Queue
 
 SOURCE_FILE  = flat14_0
 Queue
@@ -68,11 +74,17 @@ COMMAND_FILE = dev_charge_sharing
 #SOURCE_FILE  = flat10_1
 #Queue
 
-#SOURCE_FILE  = flat12_0
-#Queue
+SOURCE_FILE  = flat12_0
+Queue
 
-#SOURCE_FILE  = flat12_1
-#Queue
+SOURCE_FILE  = flat12_1
+Queue
+
+SOURCE_FILE  = flat13_0
+Queue
+
+SOURCE_FILE  = flat13_1
+Queue
 
 SOURCE_FILE  = flat14_0
 Queue

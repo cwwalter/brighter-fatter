@@ -1,12 +1,16 @@
 from numpy import *
-set_printoptions(precision=3)
+set_printoptions(precision=3, suppress=True)
 
 # Define a function which pulls out a 3x3 submatrix and turns it into a array of length 9. 
 def submatrix(M,i,j):
         return M[i-1:i+2,j-1:j+2].ravel()
 
-# Make a 400x400 CCD with a Poisson distributed 2000 electron mean in each pixel.   
-a = random.poisson(2000, (400,400) )
+# Make a 400x408 CCD with a Poisson distributed mean in each pixel.   
+mean = 3100
+a = random.poisson(mean, (400,408) )
+
+print "\nCalculate 2D spatial Autocorrelation for random numbers with mean", mean
+print "Shape is", a.shape
 
 # Loop over all the pixels of the CCD and make a sequence of the 1D arrays.
 # The second line ignores the edges.

@@ -2,7 +2,7 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
-import math
+import math                 as math
 import numpy                as np
 
 import lsst.afw.math        as afwMath
@@ -55,6 +55,15 @@ def processImage(maskedImage):
 
     print centerPixelCorrellation
 
+    # Now make a new 100x104 matrix to check the mean and stddev.
+    # (group each pixel into 4x4 blocks)
+    # I barely understand how this works (CWW)!
+    rows, cols = a.shape
+    b = a.reshape(rows//4,4,cols//4,4).sum(axis=(1, 3))
+
+    print "Original Mean:", np.mean(a), "Std:", np.std(a)
+    print "4x4      Mean:", np.mean(b), "Std:", np.std(b)
+    
 # Setup global statistics and filenames    
 statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
 afwMath.MIN | afwMath.ERRORS)
@@ -65,7 +74,7 @@ outDir       = 'output/lsst_flats_e_'
 suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
-numElectrons   = '14'
+numElectrons   = '12'
 extraId = '2'
 
 numElectrons1  = numElectrons+'0'

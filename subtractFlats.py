@@ -1,4 +1,5 @@
 # DM processing of Phosim output
+# Subtract two flats and calculate statistics
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 

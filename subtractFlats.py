@@ -80,7 +80,7 @@ suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
 numElectrons   = '12'
-extraId = '0'
+extraId = '2'
 
 numElectrons1  = numElectrons+'0'
 numElectrons2  = numElectrons+'1'
@@ -104,7 +104,7 @@ print "\nProcessing Difference"
 # Print results
 print "\n---Results for magnitude", numElectrons, "config", extraId,":\n"
 
-print "Image1:\t\t %9.2f %9.2f %7.2f   "% (mean1, std1, std1**2/mean)
+print "Image1:\t\t %9.2f %9.2f %7.2f   "% (mean1, std1, std1**2/mean1)
 print "Image3:\t\t %9.2f %9.2f %7.2f \n"% (mean3, std3, (std3/math.sqrt(2))**2/mean1)
 
 print "Grouped1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupStd1**2/groupMean1)

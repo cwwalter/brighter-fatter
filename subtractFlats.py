@@ -100,14 +100,15 @@ maskedImage3 = maskedImage1.clone()
 maskedImage3 -= maskedImage2
 (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
 
-print "\nResults for", numElectrons, "config", extraId,"\n"
+print "\n---Results for magnitude", numElectrons, "config", extraId,":\n"
 
-print "Result1: ", mean1, std1, mean1/std1**2
-print "Result3: ", mean3, std3, mean1/(std3/math.sqrt(2))**2, "\n"
+print "Image1:   %10.3f %10.3f %10.3f  "% (mean1, std1, mean1/std1**2)
+print "Image3:   %10.3f %10.3f %10.3f \n"% (mean3, std3, mean1/(std3/math.sqrt(2))**2)
 
-print "Group1:  ", groupMean1, groupStd1, groupMean1/groupStd1**2
-print "Group1:  ", groupMean3, groupStd3, groupMean3/groupStd3**2,"\n"
+print "Grouped1: %10.3f %10.3f %10.3f   "% (groupMean1, groupStd1, groupMean1/groupStd1**2)
+print "Grouped3: %10.3f %10.3f %10.3f \n"% (groupMean3, groupStd3, groupMean3/groupStd3**2)
 
-print "Corr1: ", hCorr1, vCorr1
-print "Corr3: ", hCorr3, vCorr3
+print "Correlation1: %8.3f %8.3f"% (hCorr1, vCorr1)
+print "Correlation3: %8.3f %8.3f"% (hCorr3, vCorr3)
+
 

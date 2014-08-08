@@ -80,7 +80,7 @@ suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
 numElectrons   = '12'
-extraId = '2'
+extraId = '0'
 
 numElectrons1  = numElectrons+'0'
 numElectrons2  = numElectrons+'1'
@@ -104,13 +104,11 @@ print "\nProcessing Difference"
 # Print results
 print "\n---Results for magnitude", numElectrons, "config", extraId,":\n"
 
-print "Image1:   %10.3f %10.3f %10.3f  "% (mean1, std1, mean1/std1**2)
-print "Image3:   %10.3f %10.3f %10.3f \n"% (mean3, std3, mean1/(std3/math.sqrt(2))**2)
+print "Image1:\t\t %9.2f %9.2f %7.2f   "% (mean1, std1, std1**2/mean)
+print "Image3:\t\t %9.2f %9.2f %7.2f \n"% (mean3, std3, (std3/math.sqrt(2))**2/mean1)
 
-print "Grouped1: %10.3f %10.3f %10.3f   "% (groupMean1, groupStd1, groupMean1/groupStd1**2)
-print "Grouped3: %10.3f %10.3f %10.3f \n"% (groupMean3, groupStd3, groupMean3/groupStd3**2)
+print "Grouped1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupStd1**2/groupMean1)
+print "Grouped3:\t %9.2f %9.2f       \n"% (groupMean3, groupStd3)
 
-print "Correlation1: %8.3f %8.3f"% (hCorr1, vCorr1)
-print "Correlation3: %8.3f %8.3f"% (hCorr3, vCorr3)
-
-
+print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
+print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)

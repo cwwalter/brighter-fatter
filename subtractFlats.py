@@ -51,10 +51,10 @@ def processImage(maskedImage):
 
     y = np.column_stack(q)
 
-    fullCorrellation        = np.corrcoef(y)
-    centerPixelCorrellation = fullCorrellation[5-1].reshape(3,3)
+    fullCorrelation        = np.corrcoef(y)
+    centerPixelCorrelation = fullCorrelation[5-1].reshape(3,3)
 
-    print centerPixelCorrellation
+    print centerPixelCorrelation
 
     # Now make a new 100x104 matrix to check the mean and stddev.
     # (group each pixel into 4x4 blocks)
@@ -64,7 +64,11 @@ def processImage(maskedImage):
 
     print "Original Mean:", np.mean(a), "Std:", np.std(a)
     print "4x4      Mean:", np.mean(b), "Std:", np.std(b)
-    
+
+    horizCorrelation = (centerPixelCorrelation[1,0] + centerPixelCorrelation[1,2])/2.0
+    vertCorrelation  = (centerPixelCorrelation[0,1] + centerPixelCorrelation[2,1])/2.0
+    return (np.mean(a), np.std(a), np.mean(b), np.std(b), horizCorrelation, vertCorrelation)
+        
 # Setup global statistics and filenames    
 statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
 afwMath.MIN | afwMath.ERRORS)
@@ -76,7 +80,7 @@ suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
 numElectrons   = '12'
-extraId = '2'
+extraId = '0'
 
 numElectrons1  = numElectrons+'0'
 numElectrons2  = numElectrons+'1'
@@ -85,13 +89,25 @@ fileName2 = outDir+numElectrons2+extraId+suffix
 
 maskedImage1    = afwImg.ExposureF(fileName1).getMaskedImage()
 print "Processing file ", fileName1
-processImage(maskedImage1)
-
+(mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+ 
 maskedImage2    = afwImg.ExposureF(fileName2).getMaskedImage()
 print "\nProcessing file ", fileName2
-processImage(maskedImage2)
+(mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
 
 print "\nProcessing Difference"
 maskedImage3 = maskedImage1.clone()
 maskedImage3 -= maskedImage2
-processImage(maskedImage3)
+(mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
+
+print "\nResults for", numElectrons, "config", extraId,"\n"
+
+print "Result1: ", mean1, std1, mean1/std1**2
+print "Result3: ", mean3, std3, mean1/(std3/math.sqrt(2))**2, "\n"
+
+print "Group1:  ", groupMean1, groupStd1, groupMean1/groupStd1**2
+print "Group1:  ", groupMean3, groupStd3, groupMean3/groupStd3**2,"\n"
+
+print "Corr1: ", hCorr1, vCorr1
+print "Corr3: ", hCorr3, vCorr3
+

@@ -80,26 +80,28 @@ suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
 numElectrons   = '12'
-extraId = '0'
+extraId = '2'
 
 numElectrons1  = numElectrons+'0'
 numElectrons2  = numElectrons+'1'
 fileName1 = outDir+numElectrons1+extraId+suffix
 fileName2 = outDir+numElectrons2+extraId+suffix
 
-maskedImage1    = afwImg.ExposureF(fileName1).getMaskedImage()
-print "Processing file ", fileName1
-(mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
- 
-maskedImage2    = afwImg.ExposureF(fileName2).getMaskedImage()
-print "\nProcessing file ", fileName2
-(mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
-
-print "\nProcessing Difference"
+# Get images
+maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
+maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
 maskedImage3 = maskedImage1.clone()
 maskedImage3 -= maskedImage2
+
+# Process images
+print "Processing file ", fileName1
+(mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+print "\nProcessing file ", fileName2
+(mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
+print "\nProcessing Difference"
 (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
 
+# Print results
 print "\n---Results for magnitude", numElectrons, "config", extraId,":\n"
 
 print "Image1:   %10.3f %10.3f %10.3f  "% (mean1, std1, mean1/std1**2)

@@ -6,7 +6,7 @@ def submatrix(M,i,j):
         return M[i-1:i+2,j-1:j+2].ravel()
 
 # Make a 400x408 CCD with a Poisson distributed mean in each pixel.   
-mean = 7099
+mean = 2000
 a = random.poisson(mean, (400,408) )
 
 print "\nCalculate 2D spatial Autocorrelation for random numbers with mean", mean

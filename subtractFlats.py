@@ -79,7 +79,7 @@ outDir       = 'output/lsst_flats_e_'
 suffix       = '_f2_R22_S11_E000.fits.gz'
 
 # Process Files
-numElectrons   = '12'
+numElectrons   = '13'
 extraId = '2'
 
 numElectrons1  = numElectrons+'0'
@@ -101,14 +101,20 @@ print "\nProcessing file ", fileName2
 print "\nProcessing Difference"
 (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
 
+#Calculate PTC entry (Mean/Variance)
+PTC1      = mean1/std1**2
+PTC3      = (mean1+mean2)/std3**2
+groupPTC1 = groupMean1/groupStd1**2
+groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
+ 
 # Print results
 print "\n---Results for magnitude", numElectrons, "config", extraId,":\n"
 
-print "Image1:\t\t %9.2f %9.2f %7.2f   "% (mean1, std1, std1**2/mean1)
-print "Image3:\t\t %9.2f %9.2f %7.2f \n"% (mean3, std3, (std3/math.sqrt(2))**2/mean1)
+print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
+print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
 
-print "Grouped1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupStd1**2/groupMean1)
-print "Grouped3:\t %9.2f %9.2f       \n"% (groupMean3, groupStd3)
+print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
+print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
 
 print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
 print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)

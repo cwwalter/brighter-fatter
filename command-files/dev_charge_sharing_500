@@ -1,5 +1,5 @@
 # Identify this file
-extraid 1
+extraid 4
 
 # Make a subpixel test (if pixelsize < 10.0)
 # pixelsize 0.1
@@ -20,6 +20,7 @@ chargediffusion 0
 pixelerror 0
 fieldanisotropy 0
 chargesharing 1
+chargesharingScale 500.0
 
 # Change the "perfect telescope" to get a long focal length
 # Note Phosim platescale is given in micrometers/degree.

@@ -35,6 +35,11 @@ def processImage(maskedImage):
 
     a = image.getArray().T
 
+    # We want to remove the edges because of the way the charge sharing is working now.
+    # Trim 20 pixels from outside
+    trim = 20
+    a = a[trim:-trim,trim:-trim]
+    
     print "\nCalculate 2D spatial Autocorrelation"
     print "shape is", a.shape
 

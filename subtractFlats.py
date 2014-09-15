@@ -17,8 +17,6 @@ def submatrix(M,i,j):
 
 def processImage(maskedImage):
 
-    global printLevel
-    
     # These three are held in the maskedImage
     image       = maskedImage.getImage()
     mask        = maskedImage.getMask()
@@ -83,67 +81,75 @@ def processImage(maskedImage):
     return (np.mean(a), np.std(a), np.mean(b), np.std(b), horizCorrelation, vertCorrelation)
 
 # Main Program
+def main():
 
-printLevel = 0
+    global statFlags
+    global printLevel
 
-# Setup global statistics and filenames    
-statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
-afwMath.MIN | afwMath.ERRORS)
-print "The statistics flags are set to %s."%bin(statFlags)
-print "Errors will be calculated.\n"
+    printLevel = 0
 
-outDir       = 'output/lsst_flats_e_'
-suffix       = '_f2_R22_S11_E000.fits.gz'
+    # Setup global statistics and filenames    
+    statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
+    afwMath.MIN | afwMath.ERRORS)
+    print "The statistics flags are set to %s."%bin(statFlags)
+    print "Errors will be calculated.\n"
 
-# Process Files
+    outDir       = 'output/lsst_flats_e_'
+    suffix       = '_f2_R22_S11_E000.fits.gz'
 
-numElectrons = ['18', '15', '14', '13', '12']
-extraId      = ['0', '2']
+    # Process Files
 
-#numElectrons = ['12']
-#extraId      = ['2']
+    #numElectrons = ['18', '15', '14', '13', '12']
+    numElectrons = ['18', '15', '14', '13']
+    extraId      = ['0', '2']
 
-for (j, i) in itertools.product(extraId, numElectrons):
-    
-    numElectrons1  = i+'0'
-    numElectrons2  = i+'1'
-    fileName1 = outDir+numElectrons1+j+suffix
-    fileName2 = outDir+numElectrons2+j+suffix
+    #numElectrons = ['12']
+    #extraId      = ['2']
 
-    # Get images
-    maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
-    maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
-    maskedImage3 = maskedImage1.clone()
-    maskedImage3 -= maskedImage2
+    for (j, i) in itertools.product(extraId, numElectrons):
 
-    # Process images
-    if printLevel >= 1: print "Processing file ", fileName1
-    (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
-    if printLevel >= 1: print "Processing file ", fileName2
-    (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
-    if printLevel >= 1: print "Processing Difference"
-    (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
+        numElectrons1  = i+'0'
+        numElectrons2  = i+'1'
+        fileName1 = outDir+numElectrons1+j+suffix
+        fileName2 = outDir+numElectrons2+j+suffix
 
-    #Calculate PTC entry (Mean/Variance)
-    PTC1      = mean1/std1**2
-    PTC3      = (mean1+mean2)/std3**2
-    groupPTC1 = groupMean1/groupStd1**2
-    groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
+        # Get images
+        maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
+        maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
+        maskedImage3 = maskedImage1.clone()
+        maskedImage3 -= maskedImage2
 
-    # Print results
-    if printLevel >= 1:
-        print "\n---Results for magnitude", i, "config", j,":\n"
+        # Process images
+        if printLevel >= 1: print "Processing file ", fileName1
+        (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+        if printLevel >= 1: print "Processing file ", fileName2
+        (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
+        if printLevel >= 1: print "Processing Difference"
+        (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
 
-        print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
-        print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
+        #Calculate PTC entry (Mean/Variance)
+        PTC1      = mean1/std1**2
+        PTC3      = (mean1+mean2)/std3**2
+        groupPTC1 = groupMean1/groupStd1**2
+        groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
 
-        print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
-        print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
+        # Print results
+        if printLevel >= 1:
+            print "\n---Results for magnitude", i, "config", j,":\n"
 
-        print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
-        print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
-        print
+            print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
+            print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
 
-    # Print Summary Line for this set of files
-    print "%s %s %9.2f %9.2f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
-                                                  PTC1, hCorr1, vCorr1)
+            print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
+            print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
+
+            print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
+            print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
+            print
+
+        # Print Summary Line for this set of files
+        print "%s %s %9.2f %9.2f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
+                                                      PTC1, hCorr1, vCorr1)
+
+if __name__ == "__main__":
+    main()

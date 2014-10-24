@@ -1,10 +1,15 @@
 # DM processing of Phosim output
 # You should 'setup pipe_test' to use it.
+# This program
 # C. Walter 01/2014
 
+from collections import defaultdict
+
 import math
+import itertools
 import numpy                as np
 
+import lsst.pex.logging     as pexLog
 import lsst.afw.math        as afwMath
 import lsst.afw.table       as afwTable
 import lsst.afw.image       as afwImg
@@ -45,20 +50,30 @@ algoKeys   = [schema.find(f).key for f in fields]
 
 outDir       = 'output/lsst_e_'
 suffix       = '_f2_R22_S11_E000.fits.gz'
-extraId = '2'
 
 numElectrons  = ['1000', '2000', '3000', '4000', '5000', 
                  '10000', '15000', '20000', '25000', '30000',
                  '50000', '75000', '100000']
 
-#numElectrons = ['100000']
-stdX = []; stdY= [];
-    
-for i in numElectrons:
+extraId = ['0','1','2','3','4']
+idColor = {'0':'ro', '1':'go', '2':'bo', '3':'co', '4':'yo'}
+#extraId = ['0', '1']
 
-    print "using", i
+# Create 2D lookup dictionaries to save the calculated spot widths
+stdX = defaultdict(dict)
+stdY = defaultdict(dict)
 
-    exposure    = afwImg.ExposureF(outDir+i+extraId+suffix)
+# Set the verbosity level
+printLevel = 0
+pexLog.Log.getDefaultLog().setThreshold(pexLog.Log.WARN)
+
+# Loop over the set of files in electron intensity and BF effect strength
+for (j, i) in itertools.product(extraId, numElectrons):
+
+    if printLevel >= 1:
+        print "using", j, i
+
+    exposure    = afwImg.ExposureF(outDir+i+j+suffix)
     maskedImage = exposure.getMaskedImage()
     
     # These three are held in the maskedImage
@@ -69,14 +84,15 @@ for i in numElectrons:
     imageStatistics = afwMath.makeStatistics(maskedImage, statFlags)
     numBins         = imageStatistics.getResult(afwMath.NPOINT)[0]
     mean            = imageStatistics.getResult(afwMath.MEAN)[0]
-    
-    print "The image has dimensions %i x %i pixels" \
-        %(maskedImage.getWidth(), maskedImage.getHeight())
-    print "Number of analyzed bins in image is %i"  %numBins
-    print "Max    = %9d"            %imageStatistics.getResult(afwMath.MAX)[0]
-    print "Min    = %9d"            %imageStatistics.getResult(afwMath.MIN)[0]
-    print "Mean   = %9.8f +- %3.1f" %imageStatistics.getResult(afwMath.MEAN)
-    print "StdDev = %9.2f"          %imageStatistics.getResult(afwMath.STDEV)[0]
+
+    if printLevel >= 2:
+        print "The image has dimensions %i x %i pixels" \
+            %(maskedImage.getWidth(), maskedImage.getHeight())
+        print "Number of analyzed bins in image is %i"  %numBins
+        print "Max    = %9d"            %imageStatistics.getResult(afwMath.MAX)[0]
+        print "Min    = %9d"            %imageStatistics.getResult(afwMath.MIN)[0]
+        print "Mean   = %9.8f +- %3.1f" %imageStatistics.getResult(afwMath.MEAN)
+        print "StdDev = %9.2f"          %imageStatistics.getResult(afwMath.STDEV)[0]
     
     # Detect the sources,then put them into a catalog 
     # (the table is where the catalog atually stores stuff)
@@ -89,8 +105,11 @@ for i in numElectrons:
     # Apply the measurement routines to the exposure using the sources as input
     measure.run(exposure, sources)
 
+    # For now there should only be one source (otherwise this won't work right)
     for source in sources:
-        print "Source found at ", source.getCentroid()
+        if printLevel >= 1:
+            print "Source found at ", source.getCentroid()
+
         x,y = source.getCentroid()
 
         # Now loop through the keys we want
@@ -100,13 +119,16 @@ for i in numElectrons:
                 ixx = math.sqrt(source.get(k).getIxx())
                 iyy = math.sqrt(source.get(k).getIyy())
                 ixy = source.get(k).getIxy()
-                stdX.append(ixx)
-                stdY.append(iyy)
+                stdX[j][i] = ixx
+                stdY[j][i] = iyy
                  
+        # Calculate the sizes myself by oversampling.  This is
+        # necessary for single pixel size spots where the default algorithms fail.
+
         # Had to add this for dev branch
         x = round (x)
         y = round (y)
-
+                
         yaxis      = np.linspace(y-10,y+10,200)
         yvalues    = np.repeat(image.getArray()[y-10:y+10,x],10)
         myaverage  = np.average(yaxis, weights=yvalues)
@@ -119,19 +141,40 @@ for i in numElectrons:
         variancex  = np.average((xaxis-myaverage)**2, weights=xvalues)
         stdx       = math.sqrt(variancex)
         
-        print "Electrons= %6d STDX= %4.2f STDY= %4.2f IXX= %4.2f IYY= %4.2f IXY= %4.2f\n" % \
-            (int(i), stdx, stdy, ixx, iyy, ixy)
+        print "ID:%1s Electrons= %6s STDX= %4.2f STDY= %4.2f IXX= %4.2f IYY= %4.2f IXY= %4.2f" % \
+            (j, i, stdx, stdy, ixx, iyy, ixy)
 
+# Print the result to a file for use in plotting.  Use the SDSS shape output.
+outputFile =  open('plotSpot.py','w')
 
-print "To make plot: \n"
+print >> outputFile, """
+import matplotlib.pyplot    as plt
 
-print "numElectrons =", numElectrons, "\n"
-print "stdX"+extraId, " = ", stdX, "\n"
-print "stdY"+extraId, " = ", stdY, "\n"
+spotSizePlot = plt.figure()
+spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
-print """
-plot(numElectrons, stdX0, "ro")
-xlabel('Number of Electrons')
-ylabel('Sigma X')
-title('Standard Deviation in X direction')
+xSize = spotSizePlot.add_subplot(211)
+xSize.set_ylabel('Sigma X')
+xSize.margins(0.05,.15)
+
+ySize = spotSizePlot.add_subplot(212)
+ySize.set_ylabel('Sigma Y')
+ySize.set_xlabel('Number of Electrons')
+ySize.margins(0.05,.15)
+"""
+print >> outputFile, "numElectrons =", numElectrons, "\n"
+
+for configuration in extraId:
+
+    print >> outputFile, "stdX"+configuration, " = [", \
+    ", ".join([str(stdX[configuration][electron]) for electron in numElectrons]), "]"
+
+    print >> outputFile, "stdY"+configuration, " = [", \
+    ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]), "]"
+
+    print >> outputFile, 'xSize.plot(numElectrons, stdX'+configuration+',"'+idColor[configuration]+'")\n'
+    print >> outputFile, 'ySize.plot(numElectrons, stdY'+configuration+',"'+idColor[configuration]+'")\n'
+        
+print >> outputFile, """
+spotSizePlot.show()
 """

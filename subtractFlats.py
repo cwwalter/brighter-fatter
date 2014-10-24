@@ -99,12 +99,11 @@ def main():
 
     # Process Files
 
-    #numElectrons = ['18', '15', '14', '13', '12']
-    numElectrons = ['18', '15', '14', '13']
-    extraId      = ['0', '2']
+    numElectrons = ['18', '15', '14', '13', '12']
+    extraId      = ['0', '1', '2', '3', '4']
 
-    #numElectrons = ['12']
-    #extraId      = ['2']
+    #numElectrons = ['18', '15', '14']
+    #extraId      = ['0']
 
     for (j, i) in itertools.product(extraId, numElectrons):
 

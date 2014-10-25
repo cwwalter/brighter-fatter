@@ -40,7 +40,8 @@ fields = [#'centroid.naive',
           #'centroid.gaussian.err',
           'centroid.sdss', 
           'centroid.sdss.flags',
-          'shape.sdss', 
+          'shape.sdss',
+          'shape.sdss.err', 
           'shape.sdss.centroid', 
           # 'shape.sdss.centroid.err',
           'shape.sdss.flags',
@@ -114,14 +115,16 @@ for (j, i) in itertools.product(extraId, numElectrons):
 
         # Now loop through the keys we want
         for f,k in zip(fields, algoKeys):
-            #print '    ', f, source.get(k)
+            print '    ', f, source.get(k)
             if f=='shape.sdss':
                 ixx = math.sqrt(source.get(k).getIxx())
                 iyy = math.sqrt(source.get(k).getIyy())
                 ixy = source.get(k).getIxy()
                 stdX[j][i] = ixx
                 stdY[j][i] = iyy
-                 
+            if f=='shape.sdss.err':            
+                print "ERROR!"
+
         # Calculate the sizes myself by oversampling.  This is
         # necessary for single pixel size spots where the default algorithms fail.
 
@@ -170,9 +173,9 @@ for configuration in extraId:
     ", ".join([str(stdX[configuration][electron]) for electron in numElectrons]), "]"
 
     print >> outputFile, "stdY"+configuration, " = [", \
-    ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]), "]"
+    ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]), "]\n"
 
-    print >> outputFile, 'xSize.plot(numElectrons, stdX'+configuration+',"'+idColor[configuration]+'")\n'
+    print >> outputFile, 'xSize.plot(numElectrons, stdX'+configuration+',"'+idColor[configuration]+'")'
     print >> outputFile, 'ySize.plot(numElectrons, stdY'+configuration+',"'+idColor[configuration]+'")\n'
         
 print >> outputFile, """

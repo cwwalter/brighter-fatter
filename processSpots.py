@@ -115,15 +115,15 @@ for (j, i) in itertools.product(extraId, numElectrons):
 
         # Now loop through the keys we want
         for f,k in zip(fields, algoKeys):
-            print '    ', f, source.get(k)
+            #print '    ', f, source.get(k)
             if f=='shape.sdss':
                 ixx = math.sqrt(source.get(k).getIxx())
                 iyy = math.sqrt(source.get(k).getIyy())
                 ixy = source.get(k).getIxy()
                 stdX[j][i] = ixx
                 stdY[j][i] = iyy
-            if f=='shape.sdss.err':            
-                print "ERROR!"
+            #if f=='shape.sdss.err':            
+                #print "ERROR!"
 
         # Calculate the sizes myself by oversampling.  This is
         # necessary for single pixel size spots where the default algorithms fail.
@@ -169,11 +169,11 @@ print >> outputFile, "numElectrons =", numElectrons, "\n"
 
 for configuration in extraId:
 
-    print >> outputFile, "stdX"+configuration, " = [", \
-    ", ".join([str(stdX[configuration][electron]) for electron in numElectrons]), "]"
-
-    print >> outputFile, "stdY"+configuration, " = [", \
-    ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]), "]\n"
+    print >> outputFile, "stdX%s = [%s]" % \
+    (configuration, ", ".join([str(stdX[configuration][electron]) for electron in numElectrons]))
+    
+    print >> outputFile, "stdY%s = [%s]\n" % \
+    (configuration, ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]))
 
     print >> outputFile, 'xSize.plot(numElectrons, stdX'+configuration+',"'+idColor[configuration]+'")'
     print >> outputFile, 'ySize.plot(numElectrons, stdY'+configuration+',"'+idColor[configuration]+'")\n'

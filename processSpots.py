@@ -64,6 +64,10 @@ idColor = {'0':'ro', '1':'go', '2':'bo', '3':'co', '4':'yo'}
 stdX = defaultdict(dict)
 stdY = defaultdict(dict)
 
+# And the errors on those widths
+errX = defaultdict(dict)
+errY = defaultdict(dict)
+
 # Set the verbosity level
 printLevel = 0
 pexLog.Log.getDefaultLog().setThreshold(pexLog.Log.WARN)
@@ -76,11 +80,14 @@ for (j, i) in itertools.product(extraId, numElectrons):
 
     exposure    = afwImg.ExposureF(outDir+i+j+suffix)
     maskedImage = exposure.getMaskedImage()
-    
+
     # These three are held in the maskedImage
     image       = maskedImage.getImage()
     mask        = maskedImage.getMask()
     variance    = maskedImage.getVariance()
+
+    # We need to manually make the variance plane since it is not in the phosim image.
+    variance.getArray()[:,:] = np.abs(image.getArray())
     
     imageStatistics = afwMath.makeStatistics(maskedImage, statFlags)
     numBins         = imageStatistics.getResult(afwMath.NPOINT)[0]
@@ -115,16 +122,26 @@ for (j, i) in itertools.product(extraId, numElectrons):
 
         # Now loop through the keys we want
         for f,k in zip(fields, algoKeys):
-            #print '    ', f, source.get(k)
+            # print '    ', f, source.get(k)
             if f=='shape.sdss':
                 ixx = math.sqrt(source.get(k).getIxx())
                 iyy = math.sqrt(source.get(k).getIyy())
                 ixy = source.get(k).getIxy()
                 stdX[j][i] = ixx
                 stdY[j][i] = iyy
-            #if f=='shape.sdss.err':            
-                #print "ERROR!"
+            if f=='shape.sdss.err':            
+                errxx = math.sqrt(source.get(k)[0,0]) 
+                erryy = math.sqrt(source.get(k)[1,1])
+                errxy = math.sqrt(source.get(k)[2,2])
 
+                if (math.isnan(errxx) or math.isnan(erryy)):
+                    print "Caught a NAN!"
+                    errX[j][i] = 0
+                    errY[j][i] = 0
+                else:
+                    errX[j][i] = errxx
+                    errY[j][i] = erryy
+                
         # Calculate the sizes myself by oversampling.  This is
         # necessary for single pixel size spots where the default algorithms fail.
 
@@ -158,12 +175,16 @@ spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
 xSize = spotSizePlot.add_subplot(211)
 xSize.set_ylabel('Sigma X')
-xSize.margins(0.05,.15)
+#xSize.margins(0.05,.15)
+xSize.set_xlim(0,102000)
+xSize.set_ylim(1.5,2.0)
 
 ySize = spotSizePlot.add_subplot(212)
 ySize.set_ylabel('Sigma Y')
 ySize.set_xlabel('Number of Electrons')
-ySize.margins(0.05,.15)
+#ySize.margins(0.05,.15)
+ySize.set_xlim(0,102000)
+ySize.set_ylim(1.5,2.0)
 """
 print >> outputFile, "numElectrons =", numElectrons, "\n"
 
@@ -171,12 +192,19 @@ for configuration in extraId:
 
     print >> outputFile, "stdX%s = [%s]" % \
     (configuration, ", ".join([str(stdX[configuration][electron]) for electron in numElectrons]))
+    print >> outputFile, "errX%s = [%s]\n" % \
+    (configuration, ", ".join([str(errX[configuration][electron]) for electron in numElectrons]))
     
-    print >> outputFile, "stdY%s = [%s]\n" % \
+    print >> outputFile, "stdY%s = [%s]" % \
     (configuration, ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]))
+    print >> outputFile, "errY%s = [%s]\n" % \
+    (configuration, ", ".join([str(errY[configuration][electron]) for electron in numElectrons]))
+    
+    print >> outputFile, "xSize.errorbar(numElectrons, stdX%s, yerr=errX%s, fmt='%s')" % \
+    (configuration, configuration, idColor[configuration])
 
-    print >> outputFile, 'xSize.plot(numElectrons, stdX'+configuration+',"'+idColor[configuration]+'")'
-    print >> outputFile, 'ySize.plot(numElectrons, stdY'+configuration+',"'+idColor[configuration]+'")\n'
+    print >> outputFile, "ySize.errorbar(numElectrons, stdY%s, yerr=errY%s, fmt='%s')\n" % \
+    (configuration, configuration, idColor[configuration])
         
 print >> outputFile, """
 spotSizePlot.show()

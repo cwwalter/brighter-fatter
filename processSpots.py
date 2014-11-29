@@ -57,8 +57,6 @@ numElectrons  = ['1000', '2000', '3000', '4000', '5000',
                  '50000', '75000', '100000']
 
 extraId = ['0','1','2','3','4']
-idColor = {'0':'ro', '1':'go', '2':'bo', '3':'co', '4':'yo'}
-idLegend = {'0':'perfect', '1':'x1', '2':'x10', '3':'x100', '4':'x500'}
 #extraId = ['0','1','2','3']
 
 # Create 2D lookup dictionaries to save the calculated spot widths
@@ -166,27 +164,8 @@ for (j, i) in itertools.product(extraId, numElectrons):
             (j, i, stdx, stdy, ixx, iyy, ixy)
 
 # Print the result to a file for use in plotting.  Use the SDSS shape output.
-outputFile =  open('plotSpot.py','w')
+outputFile =  open('spotData.py','w')
 
-print >> outputFile, """
-import matplotlib.pyplot    as plt
-
-spotSizePlot = plt.figure()
-spotSizePlot.suptitle('Standard Deviation in X and Y directions')
-
-xSize = spotSizePlot.add_subplot(211)
-xSize.set_ylabel('Sigma X')
-#xSize.margins(0.05,.15)
-xSize.set_xlim(0,102000)
-xSize.set_ylim(1.5,1.9)
-
-ySize = spotSizePlot.add_subplot(212)
-ySize.set_ylabel('Sigma Y')
-ySize.set_xlabel('Number of Electrons')
-#ySize.margins(0.05,.15)
-ySize.set_xlim(0,102000)
-ySize.set_ylim(1.5,1.9)
-"""
 print >> outputFile, "numElectrons =", numElectrons, "\n"
 
 for configuration in extraId:
@@ -200,14 +179,5 @@ for configuration in extraId:
     (configuration, ", ".join([str(stdY[configuration][electron]) for electron in numElectrons]))
     print >> outputFile, "errY%s = [%s]\n" % \
     (configuration, ", ".join([str(errY[configuration][electron]) for electron in numElectrons]))
-    
-    print >> outputFile, "xSize.errorbar(numElectrons, stdX%s, yerr=errX%s, fmt='%s', label='%s')" %\
-    (configuration, configuration, idColor[configuration], idLegend[configuration])
 
-    print >> outputFile, "ySize.errorbar(numElectrons, stdY%s, yerr=errY%s, fmt='%s', label='%s')\n" %\
-    (configuration, configuration, idColor[configuration], idLegend[configuration])
-        
-print >> outputFile, """
-ySize.legend(loc='best', prop={'size':8})
-spotSizePlot.show()
-"""
+outputFile.close()

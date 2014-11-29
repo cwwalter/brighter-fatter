@@ -3,6 +3,8 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
+from collections import defaultdict
+
 import math                 as math
 import numpy                as np
 import itertools
@@ -41,7 +43,7 @@ def processImage(maskedImage):
     # Trim 20 pixels from outside
     trim = 20
     a = a[trim:-trim,trim:-trim]
-
+    
     if printLevel >= 2:        
         print "\nCalculate 2D spatial Autocorrelation"
         print "shape is", a.shape
@@ -70,7 +72,7 @@ def processImage(maskedImage):
     # I barely understand how this works (CWW)!
     rows, cols = a.shape
     b = a.reshape(rows//4,4,cols//4,4).sum(axis=(1, 3))
-
+        
     if printLevel >= 2:    
         print "Original Mean:", np.mean(a), "Std:", np.std(a)
         print "4x4      Mean:", np.mean(b), "Std:", np.std(b)
@@ -88,6 +90,21 @@ def main():
 
     printLevel = 0
 
+    global mean
+    global PTC
+    global groupPTC 
+    global hCorr
+    global vCorr
+
+    global magnitude
+    
+    # Create 2D lookup dictionaries to save the PTC and Correlation coefficients for plotting
+    mean     = defaultdict(dict)
+    PTC      = defaultdict(dict)
+    groupPTC = defaultdict(dict)
+    hCorr    = defaultdict(dict)
+    vCorr    = defaultdict(dict)
+    
     # Setup global statistics and filenames    
     statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
     afwMath.MIN | afwMath.ERRORS)
@@ -98,19 +115,15 @@ def main():
     suffix       = '_f2_R22_S11_E000.fits.gz'
 
     # Process Files
+    magnitude = ['18', '15', '14', '13', '12', '10']
+    extraId   = ['0', '1', '2', '3', '4']
 
-    numElectrons = ['18', '15', '14', '13', '12']
-    extraId      = ['0', '1', '2', '3', '4']
+    for (j, i) in itertools.product(extraId, magnitude):
 
-    #numElectrons = ['18', '15', '14']
-    #extraId      = ['0']
-
-    for (j, i) in itertools.product(extraId, numElectrons):
-
-        numElectrons1  = i+'0'
-        numElectrons2  = i+'1'
-        fileName1 = outDir+numElectrons1+j+suffix
-        fileName2 = outDir+numElectrons2+j+suffix
+        magnitude1  = i+'0'
+        magnitude2  = i+'1'
+        fileName1 = outDir+magnitude1+j+suffix
+        fileName2 = outDir+magnitude2+j+suffix
 
         # Get images
         maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
@@ -147,8 +160,37 @@ def main():
             print
 
         # Print Summary Line for this set of files
-        print "%s %s %9.2f %9.2f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
-                                                      PTC1, hCorr1, vCorr1)
+        print "%s %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
+                                                                        PTC1, hCorr1, vCorr1,
+                                                                        PTC3, hCorr3, vCorr3)
 
+        # For Plotting
+        mean[j][i]     = mean1
+        PTC[j][i]      = PTC3
+        groupPTC[j][i] = groupPTC3
+        hCorr[j][i]    = hCorr3
+        vCorr[j][i]    = vCorr3
+
+    # Print the result to a file for use in plotting.  Use the SDSS shape output.
+    outputFile =  open('flatData.py','w')
+
+    for configuration in extraId:
+
+        print >> outputFile, "numElectrons%s = [%s]" % \
+        (configuration, ", ".join([str(mean[configuration][index]) for index in magnitude]))
+
+        print >> outputFile, "PTC%s = [%s]" % \
+        (configuration, ", ".join([str(PTC[configuration][index]) for index in magnitude]))
+
+        print >> outputFile, "groupPTC%s = [%s]" % \
+        (configuration, ", ".join([str(groupPTC[configuration][index]) for index in magnitude]))                
+        print >> outputFile, "hCorr%s = [%s]" % \
+        (configuration, ", ".join([str(hCorr[configuration][index]) for index in magnitude]))
+
+        print >> outputFile, "vCorr%s = [%s]\n" % \
+        (configuration, ", ".join([str(vCorr[configuration][index]) for index in magnitude]))
+
+    outputFile.close()
+                
 if __name__ == "__main__":
     main()

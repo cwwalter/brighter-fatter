@@ -32,6 +32,6 @@ ySize.errorbar(numElectrons, stdY3, yerr=errY3, fmt='co', label='x100')
 xSize.errorbar(numElectrons, stdX4, yerr=errX4, fmt='yo', label='x500')
 ySize.errorbar(numElectrons, stdY4, yerr=errY4, fmt='yo', label='x500')
 
-ySize.legend(loc='best', prop={'size':5})
+ySize.legend(loc=(.82,.5), prop={'size':9})
 spotSizePlot.show()
 

@@ -15,6 +15,10 @@ contaminationmode 0
 backalpha 0.0001
 backgamma 1.0
 
+# Make photons convert immediately
+photoelectric 0
+deadlayer 0
+
 # Turn on/off the sharing to other pixels
 chargediffusion 0
 pixelerror 0

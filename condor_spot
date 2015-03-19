@@ -11,7 +11,7 @@ notification   = Error
 
 log            = $(workdir)/condor-phosim.log
 
-phosimdir = /var/phy/project/lsst/PhoSim/sims_phosim
+phosimdir = /var/phy/project/lsst/PhoSim/phosim
 workdir   = /home/cwalter/lsst-work/brighter-fatter
 
 Initialdir     = $(phosimdir)

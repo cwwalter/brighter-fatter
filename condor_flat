@@ -1,5 +1,5 @@
 #-*-shell-script-*-    Hey Emacs its a script file
-Rank           = Mips
+#Rank           = Mips
 
 Requirements = UidDomain == "phy.duke.edu" && \
                FileSystemDomain == "phy.duke.edu" && \
@@ -30,11 +30,11 @@ Error          = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 
 COMMAND_FILE = perfect_seeing
 
-#SOURCE_FILE  = flat10_0
-#Queue
+SOURCE_FILE  = flat10_0
+Queue
 
-#SOURCE_FILE  = flat10_1
-#Queue
+SOURCE_FILE  = flat10_1
+Queue
 
 SOURCE_FILE  = flat12_0
 Queue
@@ -68,11 +68,125 @@ Queue
 
 COMMAND_FILE = dev_charge_sharing
 
-#SOURCE_FILE  = flat10_0
-#Queue
+SOURCE_FILE  = flat10_0
+Queue
 
-#SOURCE_FILE  = flat10_1
-#Queue
+SOURCE_FILE  = flat10_1
+Queue
+
+SOURCE_FILE  = flat12_0
+Queue
+
+SOURCE_FILE  = flat12_1
+Queue
+
+SOURCE_FILE  = flat13_0
+Queue
+
+SOURCE_FILE  = flat13_1
+Queue
+
+SOURCE_FILE  = flat14_0
+Queue
+
+SOURCE_FILE  = flat14_1
+Queue
+
+SOURCE_FILE  = flat15_0
+Queue
+
+SOURCE_FILE  = flat15_1
+Queue
+
+SOURCE_FILE  = flat18_0
+Queue
+
+SOURCE_FILE  = flat18_1
+Queue
+
+COMMAND_FILE = dev_charge_sharing_10
+
+SOURCE_FILE  = flat10_0
+Queue
+
+SOURCE_FILE  = flat10_1
+Queue
+
+SOURCE_FILE  = flat12_0
+Queue
+
+SOURCE_FILE  = flat12_1
+Queue
+
+SOURCE_FILE  = flat13_0
+Queue
+
+SOURCE_FILE  = flat13_1
+Queue
+
+SOURCE_FILE  = flat14_0
+Queue
+
+SOURCE_FILE  = flat14_1
+Queue
+
+SOURCE_FILE  = flat15_0
+Queue
+
+SOURCE_FILE  = flat15_1
+Queue
+
+SOURCE_FILE  = flat18_0
+Queue
+
+SOURCE_FILE  = flat18_1
+Queue
+
+COMMAND_FILE = dev_charge_sharing_100
+
+SOURCE_FILE  = flat10_0
+Queue
+
+SOURCE_FILE  = flat10_1
+Queue
+
+SOURCE_FILE  = flat12_0
+Queue
+
+SOURCE_FILE  = flat12_1
+Queue
+
+SOURCE_FILE  = flat13_0
+Queue
+
+SOURCE_FILE  = flat13_1
+Queue
+
+SOURCE_FILE  = flat14_0
+Queue
+
+SOURCE_FILE  = flat14_1
+Queue
+
+SOURCE_FILE  = flat15_0
+Queue
+
+SOURCE_FILE  = flat15_1
+Queue
+
+SOURCE_FILE  = flat18_0
+Queue
+
+SOURCE_FILE  = flat18_1
+Queue
+
+COMMAND_FILE = dev_charge_sharing_500
+
+SOURCE_FILE  = flat10_0
+Queue
+
+SOURCE_FILE  = flat10_1
+Queue
 
 SOURCE_FILE  = flat12_0
 Queue

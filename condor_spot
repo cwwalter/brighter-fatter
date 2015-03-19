@@ -1,5 +1,5 @@
 #-*-shell-script-*-    Hey Emacs its a script file!
-Rank           = Mips
+#Rank           = Mips
 
 Requirements = UidDomain == "phy.duke.edu" && \
                FileSystemDomain == "phy.duke.edu" && \
@@ -24,7 +24,7 @@ SOURCE         = $(workdir)/$(SOURCE_DIR)/$(SOURCE_FILE)
 OPTIONS        = -s R22_S11 -e 0
 COMMANDS       = $(workdir)/$(COMMAND_DIR)/$(COMMAND_FILE)
 
-Arguments      = $(SOURCE) $(OPTIONS) -c $(COMMANDS) -w $(workdir)/work -o $(workdir)/output
+Arguments      = $(SOURCE) $(OPTIONS) -c $(COMMANDS) -w $(workdir)/work_spot -o $(workdir)/output
 Output         = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 Error          = $(workdir)/logs/$(SOURCE_FILE)-$(COMMAND_FILE).log
 
@@ -74,6 +74,129 @@ Queue
 # Now Charge Sharing
 
 COMMAND_FILE = dev_charge_sharing
+
+SOURCE_FILE = 1000e
+Queue
+
+SOURCE_FILE = 2000e
+Queue
+
+SOURCE_FILE = 3000e
+Queue
+
+SOURCE_FILE = 4000e
+Queue
+
+SOURCE_FILE = 5000e
+Queue
+
+SOURCE_FILE = 10000e
+Queue
+
+SOURCE_FILE = 15000e
+Queue
+
+SOURCE_FILE = 20000e
+Queue
+
+SOURCE_FILE = 25000e
+Queue
+
+SOURCE_FILE = 30000e
+Queue
+
+SOURCE_FILE = 50000e
+Queue
+
+SOURCE_FILE = 75000e
+Queue
+
+SOURCE_FILE = 100000e
+Queue
+
+COMMAND_FILE = dev_charge_sharing_10
+
+SOURCE_FILE = 1000e
+Queue
+
+SOURCE_FILE = 2000e
+Queue
+
+SOURCE_FILE = 3000e
+Queue
+
+SOURCE_FILE = 4000e
+Queue
+
+SOURCE_FILE = 5000e
+Queue
+
+SOURCE_FILE = 10000e
+Queue
+
+SOURCE_FILE = 15000e
+Queue
+
+SOURCE_FILE = 20000e
+Queue
+
+SOURCE_FILE = 25000e
+Queue
+
+SOURCE_FILE = 30000e
+Queue
+
+SOURCE_FILE = 50000e
+Queue
+
+SOURCE_FILE = 75000e
+Queue
+
+SOURCE_FILE = 100000e
+Queue
+
+COMMAND_FILE = dev_charge_sharing_100
+
+SOURCE_FILE = 1000e
+Queue
+
+SOURCE_FILE = 2000e
+Queue
+
+SOURCE_FILE = 3000e
+Queue
+
+SOURCE_FILE = 4000e
+Queue
+
+SOURCE_FILE = 5000e
+Queue
+
+SOURCE_FILE = 10000e
+Queue
+
+SOURCE_FILE = 15000e
+Queue
+
+SOURCE_FILE = 20000e
+Queue
+
+SOURCE_FILE = 25000e
+Queue
+
+SOURCE_FILE = 30000e
+Queue
+
+SOURCE_FILE = 50000e
+Queue
+
+SOURCE_FILE = 75000e
+Queue
+
+SOURCE_FILE = 100000e
+Queue
+
+COMMAND_FILE = dev_charge_sharing_500
 
 SOURCE_FILE = 1000e
 Queue

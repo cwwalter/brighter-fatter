@@ -1,21 +1,24 @@
 import matplotlib.pyplot as plt
+# This above is nice, but the code is actually relying on the following:
+from matplotlib.pyplot import *
 
-execfile('flatData.py')
+from astropy.io import fits
+data=fits.getdata('flatData.fits',1)
 
 # Make PTC plot
 
 margins(0.05,.15)
 
-plot(numElectrons0, PTC0,  "ro", label='Perfect')
-plot(numElectrons0, PTC1,  "go", label='x1')
-plot(numElectrons0, PTC2,  "bo", label='x10')
-#plot(numElectrons0, PTC3,  "co", label='x100')
-#plot(numElectrons0, PTC4,  "yo", label='x500')
+plot(data['numElectrons'][0], data['PTC'][0],  "ro", label='Perfect')
+plot(data['numElectrons'][1], data['PTC'][1],  "go", label='x1')
+plot(data['numElectrons'][2], data['PTC'][2],  "bo", label='x10')
+#plot(data['numElectrons'][0], data['PTC'][3],  "co", label='x100')
+#plot(data['numElectrons'][0], data['PTC'][4],  "yo", label='x500')
 
 xlabel('Number of Electrons')
 ylabel('Mean / Variance')
 title('PTC Curve for simulated flats')
-legend(loc='best', prop={'size':12})
+legend(loc='best', prop={'size':12}, numpoints=1)
 
 ylim(0.0,2.8)
 
@@ -26,16 +29,16 @@ figure()
 
 margins(0.05,.15)
 
-plot(numElectrons0, groupPTC0,  "ro", label='Perfect')
-plot(numElectrons0, groupPTC1,  "go", label='x1')
-plot(numElectrons0, groupPTC2,  "bo", label='x10')
-#plot(numElectrons0, PTC3,  "co", label='x100')
-#plot(numElectrons0, PTC4,  "yo", label='x500')
+plot(data['numElectrons'][0], data['groupPTC'][0],  "ro", label='Perfect')
+plot(data['numElectrons'][1], data['groupPTC'][1],  "go", label='x1')
+plot(data['numElectrons'][2], data['groupPTC'][2],  "bo", label='x10')
+#plot(data['numElectrons'][3], data['PTC'][3],  "co", label='x100')
+#plot(data['numElectrons'][4], data['PTC'][4],  "yo", label='x500')
 
 xlabel('Number of Electrons')
 ylabel('Mean / Variance')
 title('PTC Curve for simulated flats grouped into 4x4 pixels')
-legend(loc='best', prop={'size':12})
+legend(loc='best', prop={'size':12}, numpoints=1)
 
 ylim(0.0,2.8)
 
@@ -47,16 +50,16 @@ figure()
 
 margins(0.05,.15)
 
-plot(numElectrons0, hCorr0,  "ro", label='Perfect')
-plot(numElectrons0, hCorr1,  "go", label='x1')
-plot(numElectrons0, hCorr2,  "bo", label='x10')
-##plot(numElectrons0, hCorr3,  "co", label='x100')
-##plot(numElectrons0, hCorr4,  "yo", label='x500')
+plot(data['numElectrons'][0], data['hCorr'][0],  "ro", label='Perfect')
+plot(data['numElectrons'][1], data['hCorr'][1],  "go", label='x1')
+plot(data['numElectrons'][2], data['hCorr'][2],  "bo", label='x10')
+##plot(data['numElectrons'][3], data['hCorr'][3],  "co", label='x100')
+##plot(data['numElectrons'][4], data['hCorr'][4],  "yo", label='x500')
 
 xlabel('Number of Electrons')
 ylabel('Autocorrelation Coefficient')
 title('Horizontal Autocorrelation Coefficients')
-legend(loc='best', prop={'size':12})
+legend(loc='best', prop={'size':12}, numpoints=1)
 
 ylim(-.1,0.15)
 
@@ -64,16 +67,16 @@ ylim(-.1,0.15)
 
 figure()
 
-plot(numElectrons0, vCorr0,  "ro", label='Perfect')
-plot(numElectrons0, vCorr1,  "go", label='x1')
-plot(numElectrons0, vCorr2,  "bo", label='x10')
-##plot(numElectrons0, vCorr3,  "co", label='x100')
-##plot(numElectrons0, vCorr4,  "yo", label='x500')
+plot(data['numElectrons'][0], data['vCorr'][0],  "ro", label='Perfect')
+plot(data['numElectrons'][1], data['vCorr'][1],  "go", label='x1')
+plot(data['numElectrons'][2], data['vCorr'][2],  "bo", label='x10')
+##plot(data['numElectrons'][3], data['vCorr'][3],  "co", label='x100')
+##plot(data['numElectrons'][4], data['vCorr'][4],  "yo", label='x500')
 
 xlabel('Number of Electrons')
 ylabel('Autocorrelation Coefficient')
 title('Vertical Autocorrelation Coefficients')
-legend(loc='best', prop={'size':12})
+legend(loc='best', prop={'size':12}, numpoints=1)
 
 ylim(-.1,0.15)
 

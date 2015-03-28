@@ -3,6 +3,7 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
+from __future__ import division
 from collections import defaultdict
 
 import math                 as math
@@ -13,6 +14,9 @@ import lsst.afw.math        as afwMath
 import lsst.afw.table       as afwTable
 import lsst.afw.image       as afwImg
 import lsst.afw.detection   as afwDetect
+
+from astropy.io import fits
+from astropy.table import Table, Column
 
 def submatrix(M,i,j):
     return M[i-1:i+2,j-1:j+2].ravel()
@@ -90,21 +94,6 @@ def main():
 
     printLevel = 0
 
-    global mean
-    global PTC
-    global groupPTC 
-    global hCorr
-    global vCorr
-
-    global magnitude
-    
-    # Create 2D lookup dictionaries to save the PTC and Correlation coefficients for plotting
-    mean     = defaultdict(dict)
-    PTC      = defaultdict(dict)
-    groupPTC = defaultdict(dict)
-    hCorr    = defaultdict(dict)
-    vCorr    = defaultdict(dict)
-    
     # Setup global statistics and filenames    
     statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
     afwMath.MIN | afwMath.ERRORS)
@@ -115,80 +104,93 @@ def main():
     suffix       = '_f2_R22_S11_E000.fits.gz'
 
     # Process Files
-    magnitude = ['18', '15', '14', '13', '12', '10']
+    magnitude = [18, 15, 14, 13, 12, 10]
     extraId   = ['0', '1', '2', '3', '4']
 
-    for (j, i) in itertools.product(extraId, magnitude):
+    # Create 2D arrays the PTC and Correlation coefficients for plotting
+    mean     = np.zeros((len(extraId),len(magnitude)))
+    PTC      = np.zeros_like(mean)
+    groupPTC = np.zeros_like(mean)
+    hCorr    = np.zeros_like(mean)
+    vCorr    = np.zeros_like(mean)
+    
+    for (i, mag) in enumerate(magnitude):
+        for (j, exid) in enumerate(extraId):
 
-        magnitude1  = i+'0'
-        magnitude2  = i+'1'
-        fileName1 = outDir+magnitude1+j+suffix
-        fileName2 = outDir+magnitude2+j+suffix
+            fileName1 = "%s%02d%1d%s%s" % (outDir,mag,0,exid,suffix)
+            print fileName1
+            print((outDir,mag,i,0,exid,suffix))
+            fileName2 = "%s%02d%1d%s%s" % (outDir,mag,1,exid,suffix)
 
-        # Get images
-        maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
-        maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
-        maskedImage3 = maskedImage1.clone()
-        maskedImage3 -= maskedImage2
+            # Get images
+            maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
+            maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
+            maskedImage3 = maskedImage1.clone()
+            maskedImage3 -= maskedImage2
 
-        # Process images
-        if printLevel >= 1: print "Processing file ", fileName1
-        (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
-        if printLevel >= 1: print "Processing file ", fileName2
-        (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
-        if printLevel >= 1: print "Processing Difference"
-        (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
+            # Process images
+            if printLevel >= 1: print "Processing file ", fileName1
+            (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+            if printLevel >= 1: print "Processing file ", fileName2
+            (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
+            if printLevel >= 1: print "Processing Difference"
+            (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
 
-        #Calculate PTC entry (Mean/Variance)
-        PTC1      = mean1/std1**2
-        PTC3      = (mean1+mean2)/std3**2
-        groupPTC1 = groupMean1/groupStd1**2
-        groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
+            #Calculate PTC entry (Mean/Variance)
+            PTC1      = mean1/std1**2
+            PTC3      = (mean1+mean2)/std3**2
+            groupPTC1 = groupMean1/groupStd1**2
+            groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
 
-        # Print results
-        if printLevel >= 1:
-            print "\n---Results for magnitude", i, "config", j,":\n"
+            # Print results
+            if printLevel >= 1:
+                print "\n---Results for magnitude", i, "config", j,":\n"
 
-            print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
-            print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
+                print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
+                print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
 
-            print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
-            print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
+                print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
+                print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
 
-            print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
-            print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
-            print
+                print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
+                print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
+                print
 
-        # Print Summary Line for this set of files
-        print "%s %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
-                                                                        PTC1, hCorr1, vCorr1,
-                                                                        PTC3, hCorr3, vCorr3)
+            # Print Summary Line for this set of files
+            print "%s %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
+                                                                            PTC1, hCorr1, vCorr1,
+                                                                            PTC3, hCorr3, vCorr3)
 
-        # For Plotting
-        mean[j][i]     = mean1
-        PTC[j][i]      = PTC3
-        groupPTC[j][i] = groupPTC3
-        hCorr[j][i]    = hCorr3
-        vCorr[j][i]    = vCorr3
+            # For Plotting
+            mean[j][i]     = mean1
+            PTC[j][i]      = PTC3
+            groupPTC[j][i] = groupPTC3
+            hCorr[j][i]    = hCorr3
+            vCorr[j][i]    = vCorr3
+
+
+    # Save the output arrays to a Binary FITS File
+    data=Table([mean, PTC, groupPTC, hCorr, vCorr], names=("numElectrons", "PTC", "groupPTC", "hCorr", "vCorr"))
+    data.write('flatData.fits', overwrite=True)
 
     # Print the result to a file for use in plotting.  Use the SDSS shape output.
     outputFile =  open('flatData.py','w')
 
-    for configuration in extraId:
+    for configuration, exid in enumerate(extraId):
 
         print >> outputFile, "numElectrons%s = [%s]" % \
-        (configuration, ", ".join([str(mean[configuration][index]) for index in magnitude]))
+        (configuration, ", ".join([str(mean[configuration][index]) for index in range(len(magnitude))]))
 
         print >> outputFile, "PTC%s = [%s]" % \
-        (configuration, ", ".join([str(PTC[configuration][index]) for index in magnitude]))
+        (configuration, ", ".join([str(PTC[configuration][index]) for index in range(len(magnitude))]))
 
         print >> outputFile, "groupPTC%s = [%s]" % \
-        (configuration, ", ".join([str(groupPTC[configuration][index]) for index in magnitude]))                
+        (configuration, ", ".join([str(groupPTC[configuration][index]) for index in range(len(magnitude))]))                
         print >> outputFile, "hCorr%s = [%s]" % \
-        (configuration, ", ".join([str(hCorr[configuration][index]) for index in magnitude]))
+        (configuration, ", ".join([str(hCorr[configuration][index]) for index in range(len(magnitude))]))
 
         print >> outputFile, "vCorr%s = [%s]\n" % \
-        (configuration, ", ".join([str(vCorr[configuration][index]) for index in magnitude]))
+        (configuration, ", ".join([str(vCorr[configuration][index]) for index in range(len(magnitude))]))
 
     outputFile.close()
                 

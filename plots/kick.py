@@ -1,4 +1,4 @@
-close()
+from matplotlib.pyplot import *
 
 axis([-0.9,0.5,-0.9,0.5])
 

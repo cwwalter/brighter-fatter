@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt
-# This above is nice, but the code is actually relying on the following:
 from matplotlib.pyplot import *
+from astropy.table import Table
 
-from astropy.io import fits
-data=fits.getdata('flatData.fits',1)
+data = Table.read('flatData.fits')
 
 # Make PTC plot
 

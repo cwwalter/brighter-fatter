@@ -3,20 +3,13 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
-from __future__ import division
-from collections import defaultdict
-
 import math                 as math
 import numpy                as np
-import itertools
 
 import lsst.afw.math        as afwMath
-import lsst.afw.table       as afwTable
 import lsst.afw.image       as afwImg
-import lsst.afw.detection   as afwDetect
 
-from astropy.io import fits
-from astropy.table import Table, Column
+from astropy.table import Table
 
 def submatrix(M,i,j):
     return M[i-1:i+2,j-1:j+2].ravel()
@@ -84,7 +77,7 @@ def processImage(maskedImage):
 
     horizCorrelation = (centerPixelCorrelation[1,0] + centerPixelCorrelation[1,2])/2.0
     vertCorrelation  = (centerPixelCorrelation[0,1] + centerPixelCorrelation[2,1])/2.0
-    return (np.mean(a), np.std(a), np.mean(b), np.std(b), horizCorrelation, vertCorrelation)
+    return (np.mean(a), np.std(a), np.mean(b), np.std(b),horizCorrelation,vertCorrelation)
 
 # Main Program
 def main():
@@ -113,14 +106,12 @@ def main():
     groupPTC = np.zeros_like(mean)
     hCorr    = np.zeros_like(mean)
     vCorr    = np.zeros_like(mean)
-    
-    for (i, mag) in enumerate(magnitude):
-        for (j, exid) in enumerate(extraId):
 
-            fileName1 = "%s%02d%1d%s%s" % (outDir,mag,0,exid,suffix)
-            print fileName1
-            print((outDir,mag,i,0,exid,suffix))
-            fileName2 = "%s%02d%1d%s%s" % (outDir,mag,1,exid,suffix)
+    for (j, fileId) in enumerate(extraId):
+        for (i, fileMag) in enumerate(magnitude):
+
+            fileName1 = "%s%02d%1d%s%s" % (outDir, fileMag, 0, fileId, suffix)
+            fileName2 = "%s%02d%1d%s%s" % (outDir, fileMag, 1, fileId, suffix)
 
             # Get images
             maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
@@ -130,11 +121,11 @@ def main():
 
             # Process images
             if printLevel >= 1: print "Processing file ", fileName1
-            (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+            (mean1,std1,groupMean1,groupStd1,hCorr1,vCorr1) = processImage(maskedImage1)
             if printLevel >= 1: print "Processing file ", fileName2
-            (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
+            (mean2,std2,groupMean2,groupStd2,hCorr2,vCorr2) = processImage(maskedImage2)
             if printLevel >= 1: print "Processing Difference"
-            (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
+            (mean3, std3, groupMean3,groupStd3,hCorr3,vCorr3) = processImage(maskedImage3)
 
             #Calculate PTC entry (Mean/Variance)
             PTC1      = mean1/std1**2
@@ -157,9 +148,8 @@ def main():
                 print
 
             # Print Summary Line for this set of files
-            print "%s %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f"% (i, j, mean1, std1,
-                                                                            PTC1, hCorr1, vCorr1,
-                                                                            PTC3, hCorr3, vCorr3)
+            print "%d %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
+            (fileMag, fileId, mean1, std1, PTC1, hCorr1, vCorr1, PTC3, hCorr3, vCorr3)
 
             # For Plotting
             mean[j][i]     = mean1
@@ -168,31 +158,10 @@ def main():
             hCorr[j][i]    = hCorr3
             vCorr[j][i]    = vCorr3
 
-
     # Save the output arrays to a Binary FITS File
-    data=Table([mean, PTC, groupPTC, hCorr, vCorr], names=("numElectrons", "PTC", "groupPTC", "hCorr", "vCorr"))
-    data.write('flatData.fits', overwrite=True)
+    dataTable = Table( [mean, PTC, groupPTC, hCorr, vCorr],
+                       names = ("numElectrons", "PTC", "groupPTC", "hCorr", "vCorr") )
+    dataTable.write('flatData.fits', overwrite=True)
 
-    # Print the result to a file for use in plotting.  Use the SDSS shape output.
-    outputFile =  open('flatData.py','w')
-
-    for configuration, exid in enumerate(extraId):
-
-        print >> outputFile, "numElectrons%s = [%s]" % \
-        (configuration, ", ".join([str(mean[configuration][index]) for index in range(len(magnitude))]))
-
-        print >> outputFile, "PTC%s = [%s]" % \
-        (configuration, ", ".join([str(PTC[configuration][index]) for index in range(len(magnitude))]))
-
-        print >> outputFile, "groupPTC%s = [%s]" % \
-        (configuration, ", ".join([str(groupPTC[configuration][index]) for index in range(len(magnitude))]))                
-        print >> outputFile, "hCorr%s = [%s]" % \
-        (configuration, ", ".join([str(hCorr[configuration][index]) for index in range(len(magnitude))]))
-
-        print >> outputFile, "vCorr%s = [%s]\n" % \
-        (configuration, ", ".join([str(vCorr[configuration][index]) for index in range(len(magnitude))]))
-
-    outputFile.close()
-                
 if __name__ == "__main__":
     main()

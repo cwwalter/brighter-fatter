@@ -33,6 +33,13 @@ detect  = measAlg.SourceDetectionTask(config=detectSourcesConfig,
 measure = measAlg.SourceMeasurementTask(config=measureSourcesConfig, 
                                         schema=schema)
 
+#Aliases only
+measureSourcesConfig.slots.psfFlux    = None
+measureSourcesConfig.slots.apFlux     = None
+measureSourcesConfig.slots.modelFlux  = None
+measureSourcesConfig.slots.instFlux   = None
+measureSourcesConfig.validate()
+
 #  Choose algorithms to look at the output of. 
 fields = [#'centroid.naive', 
           #'centroid.naive.err', 'centroid.naive.flags',

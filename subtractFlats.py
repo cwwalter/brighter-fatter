@@ -3,7 +3,7 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
-import math          as math
+import math           as math
 import numpy          as np
 import pandas         as pd
 import itertools

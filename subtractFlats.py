@@ -3,7 +3,7 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
-#import math          as math
+import math          as math
 import numpy          as np
 import pandas         as pd
 import itertools
@@ -103,13 +103,13 @@ def main():
 
     # Process Files
     magnitude = [18, 15, 14, 13, 12, 10]
-    extraId   = ['0', '1', '2', '3', '4']
+    extraId   = [0, 1, 2, 3, 4]
 
     # Loop over the set of files in electron intensity and BF effect strength
     for (j, i) in itertools.product(extraId, magnitude):
 
-        fileName1 = "%s%02d%1d%s%s" % (outDir, i, 0, j, suffix)
-        fileName2 = "%s%02d%1d%s%s" % (outDir, i, 1, j, suffix)
+        fileName1 = "%s%02d%1d%1d%s" % (outDir, i, 0, j, suffix)
+        fileName2 = "%s%02d%1d%1d%s" % (outDir, i, 1, j, suffix)
 
         # Get images
         maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
@@ -146,7 +146,7 @@ def main():
             print
 
         # Print Summary Line for this set of files
-        print "%d %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
+        print "%d %d %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
         (i, j, mean1, std1, PTC1, hCorr1, vCorr1, PTC3, hCorr3, vCorr3)
 
         # Fill the Pandas data frame

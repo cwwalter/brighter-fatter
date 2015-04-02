@@ -7,11 +7,11 @@ spots = store['spots']
 spotSizePlot, (xPlot, yPlot) = plt.subplots(2,1)
 spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
-config0 = spots.query(' config=="0" ')
-config1 = spots.query(' config=="1" ')
-config2 = spots.query(' config=="2" ')
-config3 = spots.query(' config=="3" ')
-config4 = spots.query(' config=="4" ')
+config0 = spots.query('config==0')
+config1 = spots.query('config==1')
+config2 = spots.query('config==2')
+config3 = spots.query('config==3')
+config4 = spots.query('config==4')
 
 config0.plot('numElectrons', 'ixx', yerr='errxx', fmt='ro', ax=xPlot, label='perfect')
 config1.plot('numElectrons', 'ixx', yerr='errxx', fmt='go', ax=xPlot, label='x1')

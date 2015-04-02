@@ -32,7 +32,7 @@ electronLevel  = [1000, 2000, 3000, 4000, 5000,
                  10000, 15000, 20000, 25000, 30000,
                  50000, 75000, 100000]
     
-extraId = ['0','1','2','3','4']
+extraId = [0, 1, 2, 3, 4]
 
 # Set the statistics flags
 statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
@@ -80,7 +80,7 @@ for (j, i) in itertools.product(extraId, electronLevel):
     if printLevel >= 1:
         print "using", j, i
 
-    fileName = "%s%02d%s%s" % (outDir, i, j, suffix)
+    fileName = "%s%02d%d%s" % (outDir, i, j, suffix)
     exposure    = afwImg.ExposureF(fileName)
     maskedImage = exposure.getMaskedImage()
 
@@ -160,7 +160,7 @@ for (j, i) in itertools.product(extraId, electronLevel):
     variancex  = np.average((xaxis-myaverage)**2, weights=xvalues)
     stdx       = math.sqrt(variancex)
             
-    print ("ID:%1s Electrons= %6s STDX= %4.2f STDY= %4.2f IXX= %4.2f IYY= %4.2f "
+    print ("ID:%1d Electrons= %6s STDX= %4.2f STDY= %4.2f IXX= %4.2f IYY= %4.2f "
             "IXY= %4.2f") % (j, i, stdx, stdy, ixx, iyy, ixy)
 
     # Fill the Pandas data frame

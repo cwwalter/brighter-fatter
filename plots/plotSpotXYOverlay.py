@@ -7,8 +7,8 @@ spots = store['spots']
 spotSizePlot, axis = plt.subplots(1,1)
 spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
-config0 = spots.query(' config=="0" ')
-config4 = spots.query(' config=="4" ')
+config0 = spots.query('config==0')
+config4 = spots.query('config==4')
 
 # Label is broken right now in pandas
 config0.plot('numElectrons', 'ixx', yerr='errxx', ax=axis, fmt='ko', label='Perfect X')

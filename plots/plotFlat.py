@@ -3,11 +3,11 @@ import pandas as pd
 
 def plotFrameVariable(dataFrame, title, variable, yLabel, yLim):
 
-    config0 = dataFrame.query(' config=="0" ')
-    config1 = dataFrame.query(' config=="1" ')
-    config2 = dataFrame.query(' config=="2" ')
-    config3 = dataFrame.query(' config=="3" ')
-    config4 = dataFrame.query(' config=="4" ')
+    config0 = dataFrame.query('config==0')
+    config1 = dataFrame.query('config==1')
+    config2 = dataFrame.query('config==2')
+    config3 = dataFrame.query('config==3')
+    config4 = dataFrame.query('config==4')
 
     flatPlot, axis = plt.subplots(1,1)
     flatPlot.suptitle(title)

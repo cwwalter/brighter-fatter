@@ -1,81 +1,51 @@
-from matplotlib.pyplot import *
-from astropy.table import Table
+import matplotlib.pyplot as plt
+import pandas as pd
 
-data = Table.read('flatData.fits')
+def plotFrameVariable(dataFrame, title, variable, yLabel, yLim):
 
-# Make PTC plot
+    config0 = dataFrame.query(' config=="0" ')
+    config1 = dataFrame.query(' config=="1" ')
+    config2 = dataFrame.query(' config=="2" ')
+    config3 = dataFrame.query(' config=="3" ')
+    config4 = dataFrame.query(' config=="4" ')
 
-margins(0.05,.15)
+    flatPlot, axis = plt.subplots(1,1)
+    flatPlot.suptitle(title)
 
-plot(data['numElectrons'][0], data['PTC'][0],  "ro", label='Perfect')
-plot(data['numElectrons'][1], data['PTC'][1],  "go", label='x1')
-plot(data['numElectrons'][2], data['PTC'][2],  "bo", label='x10')
-#plot(data['numElectrons'][0], data['PTC'][3],  "co", label='x100')
-#plot(data['numElectrons'][0], data['PTC'][4],  "yo", label='x500')
+    config0.plot('numElectrons', variable, style='ro', ax=axis, label='Perfect')
+    config1.plot('numElectrons', variable, style='go', ax=axis, label='x1')
+    config2.plot('numElectrons', variable, style='bo', ax=axis, label='x10')
+    #config3.plot('numElectrons', variable, style='co', ax=axis, label='x100')
+    #config3.plot('numElectrons', variable, style='yo', ax=axis, label='x500')
 
-xlabel('Number of Electrons')
-ylabel('Mean / Variance')
-title('PTC Curve for simulated flats')
-legend(loc='best', prop={'size':12}, numpoints=1)
+    axis.set_xlabel('Number of Electrons')
+    axis.set_ylabel(yLabel)
+    axis.set_xlim(0.0, 230000)
+    axis.set_ylim(yLim)
+    axis.grid('off', axis='both')
+    axis.legend(loc='best', prop={'size':12}, numpoints=1)
 
-ylim(0.0,2.8)
+    flatPlot.show()
 
-show()
+# Main Program
+def main():
 
-# Make group 4x4 PTC plot
-figure()
+    store = pd.HDFStore('flatData.h5')
+    flats = store['flats']
+    
+    plotFrameVariable(flats, 'PTC Curve for simulated flats',
+                'PTC', 'Mean / Variance', (0.0, 2.8) )
+    
+    plotFrameVariable(flats, 'PTC Curve for simulated flats grouped into 4x4 pixels',
+                'groupPTC', 'Mean / Variance', (0.0, 2.8) )
+    
+    plotFrameVariable(flats, 'Horizontal Autocorrelation Coefficients',
+                'hCorr', 'Autocorrelation Coefficient', (-0.1, 0.15) )
+    
+    plotFrameVariable(flats, 'Vertical Autocorrelation Coefficients',
+                'vCorr', 'Autocorrelation Coefficient', (-0.1, 0.15) )
 
-margins(0.05,.15)
-
-plot(data['numElectrons'][0], data['groupPTC'][0],  "ro", label='Perfect')
-plot(data['numElectrons'][1], data['groupPTC'][1],  "go", label='x1')
-plot(data['numElectrons'][2], data['groupPTC'][2],  "bo", label='x10')
-#plot(data['numElectrons'][3], data['PTC'][3],  "co", label='x100')
-#plot(data['numElectrons'][4], data['PTC'][4],  "yo", label='x500')
-
-xlabel('Number of Electrons')
-ylabel('Mean / Variance')
-title('PTC Curve for simulated flats grouped into 4x4 pixels')
-legend(loc='best', prop={'size':12}, numpoints=1)
-
-ylim(0.0,2.8)
-
-show()
-
-# Make horizontal correlation coefficient plot
-
-figure()
-
-margins(0.05,.15)
-
-plot(data['numElectrons'][0], data['hCorr'][0],  "ro", label='Perfect')
-plot(data['numElectrons'][1], data['hCorr'][1],  "go", label='x1')
-plot(data['numElectrons'][2], data['hCorr'][2],  "bo", label='x10')
-##plot(data['numElectrons'][3], data['hCorr'][3],  "co", label='x100')
-##plot(data['numElectrons'][4], data['hCorr'][4],  "yo", label='x500')
-
-xlabel('Number of Electrons')
-ylabel('Autocorrelation Coefficient')
-title('Horizontal Autocorrelation Coefficients')
-legend(loc='best', prop={'size':12}, numpoints=1)
-
-ylim(-.1,0.15)
-
-# Make vertical correlation coefficient plot
-
-figure()
-
-plot(data['numElectrons'][0], data['vCorr'][0],  "ro", label='Perfect')
-plot(data['numElectrons'][1], data['vCorr'][1],  "go", label='x1')
-plot(data['numElectrons'][2], data['vCorr'][2],  "bo", label='x10')
-##plot(data['numElectrons'][3], data['vCorr'][3],  "co", label='x100')
-##plot(data['numElectrons'][4], data['vCorr'][4],  "yo", label='x500')
-
-xlabel('Number of Electrons')
-ylabel('Autocorrelation Coefficient')
-title('Vertical Autocorrelation Coefficients')
-legend(loc='best', prop={'size':12}, numpoints=1)
-
-ylim(-.1,0.15)
-
-show()
+    store.close()
+    
+if __name__ == "__main__":
+    main()

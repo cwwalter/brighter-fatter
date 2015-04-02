@@ -1,40 +1,42 @@
 import matplotlib.pyplot  as plt
-from matplotlib.pyplot import *
-from astropy.table import Table
+import pandas as pd
 
-data = Table.read('spotData.fits')
+store = pd.HDFStore('spotData.h5')
+spots = store['spots']
 
-spotSizePlot = plt.figure()
+spotSizePlot, (xPlot, yPlot) = plt.subplots(2,1)
 spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
-xSize = spotSizePlot.add_subplot(211)
-xSize.set_ylabel('Sigma X')
-#xSize.margins(0.05,.15)
-xSize.set_xlim(0,102000)
-xSize.set_ylim(1.5,1.9)
+config0 = spots.query(' config=="0" ')
+config1 = spots.query(' config=="1" ')
+config2 = spots.query(' config=="2" ')
+config3 = spots.query(' config=="3" ')
+config4 = spots.query(' config=="4" ')
 
-ySize = spotSizePlot.add_subplot(212)
-ySize.set_ylabel('Sigma Y')
-ySize.set_xlabel('Number of Electrons')
-#ySize.margins(0.05,.15)
-ySize.set_xlim(0,102000)
-ySize.set_ylim(1.5,1.9)
+config0.plot('numElectrons', 'ixx', yerr='errxx', fmt='ro', ax=xPlot, label='perfect')
+config1.plot('numElectrons', 'ixx', yerr='errxx', fmt='go', ax=xPlot, label='x1')
+config2.plot('numElectrons', 'ixx', yerr='errxx', fmt='bo', ax=xPlot, label='x10')
+config3.plot('numElectrons', 'ixx', yerr='errxx', fmt='co', ax=xPlot, label='x100')
+config4.plot('numElectrons', 'ixx', yerr='errxx', fmt='yo', ax=xPlot, label='x500')
 
-xSize.errorbar(data['numElectrons'][0], data['stdX'][0], yerr=data['errX'][0], fmt='ro', label='perfect')
-ySize.errorbar(data['numElectrons'][0], data['stdY'][0], yerr=data['errY'][0], fmt='ro', label='perfect')
+config0.plot('numElectrons', 'iyy', yerr='erryy', fmt='ro', ax=yPlot, label='perfect')
+config1.plot('numElectrons', 'iyy', yerr='erryy', fmt='go', ax=yPlot, label='x1')
+config2.plot('numElectrons', 'iyy', yerr='erryy', fmt='bo', ax=yPlot, label='x10')
+config3.plot('numElectrons', 'iyy', yerr='erryy', fmt='co', ax=yPlot, label='x100')
+config4.plot('numElectrons', 'iyy', yerr='erryy', fmt='yo', ax=yPlot, label='x500')
 
-xSize.errorbar(data['numElectrons'][1], data['stdX'][1], yerr=data['errX'][1], fmt='go', label='x1')
-ySize.errorbar(data['numElectrons'][1], data['stdY'][1], yerr=data['errY'][1], fmt='go', label='x1')
+xPlot.set_ylabel('Sigma X')
+xPlot.set_xlim(0,102000)
+xPlot.set_ylim(1.5,1.9)
+xPlot.grid('off', axis='both')
+xPlot.legend().remove()
 
-xSize.errorbar(data['numElectrons'][2], data['stdX'][2], yerr=data['errX'][2], fmt='bo', label='x10')
-ySize.errorbar(data['numElectrons'][2], data['stdY'][2], yerr=data['errY'][2], fmt='bo', label='x10')
+yPlot.set_xlabel('Number of Electrons')
+yPlot.set_ylabel('Sigma Y')
+yPlot.set_xlim(0,102000)
+yPlot.set_ylim(1.5,1.9)
+yPlot.grid('off', axis='both')
+yPlot.legend(loc=(.82,.5), prop={'size':9}, numpoints=1)
 
-xSize.errorbar(data['numElectrons'][3], data['stdX'][3], yerr=data['errX'][3], fmt='co', label='x100')
-ySize.errorbar(data['numElectrons'][3], data['stdY'][3], yerr=data['errY'][3], fmt='co', label='x100')
-
-xSize.errorbar(data['numElectrons'][3], data['stdX'][4], yerr=data['errX'][4], fmt='yo', label='x500')
-ySize.errorbar(data['numElectrons'][3], data['stdY'][4], yerr=data['errY'][4], fmt='yo', label='x500')
-
-ySize.legend(loc=(.82,.5), prop={'size':9}, numpoints=1)
 spotSizePlot.show()
-
+store.close()

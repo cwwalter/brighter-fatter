@@ -1,25 +1,28 @@
-import matplotlib.pyplot    as plt
-from matplotlib.pyplot import *
-from astropy.table import Table
+import matplotlib.pyplot as plt
+import pandas as pd
 
-data = Table.read('spotData.fits')
+store = pd.HDFStore('spotData.h5')
+spots = store['spots']
 
-
-spotSizePlot = plt.figure()
+spotSizePlot, axis = plt.subplots(1,1)
 spotSizePlot.suptitle('Standard Deviation in X and Y directions')
 
-xSize = spotSizePlot.add_subplot(111)
-xSize.set_ylabel('Sigma')
-#xSize.margins(0.05,.15)
-xSize.set_xlim(0,102000)
-xSize.set_ylim(1.5,1.9)
+config0 = spots.query(' config=="0" ')
+config4 = spots.query(' config=="4" ')
 
-xSize.errorbar(data['numElectrons'][0], data['stdX'][0], yerr=data['errX'][0], fmt='ko', label='perfect X')
-xSize.errorbar(data['numElectrons'][0], data['stdY'][0], yerr=data['errY'][0], fmt='bo', label='perfect Y')
+# Label is broken right now in pandas
+config0.plot('numElectrons', 'ixx', yerr='errxx', ax=axis, fmt='ko', label='Perfect X')
+config0.plot('numElectrons', 'iyy', yerr='erryy', ax=axis, fmt='bo', label='Perfect Y')
+config4.plot('numElectrons', 'ixx', yerr='errxx', ax=axis, fmt="go", label='x500 X')
+config4.plot('numElectrons', 'iyy', yerr='erryy', ax=axis, fmt="ro", label='x500 Y')
 
-xSize.errorbar(data['numElectrons'][4], data['stdX'][4], yerr=data['errX'][4], fmt='go', label='x500 X')
-xSize.errorbar(data['numElectrons'][4], data['stdY'][4], yerr=data['errY'][4], fmt='ro', label='x500 Y')
+# Some bug(?) in Pandas means you have to this after plotting
+axis.set_ylabel('IXX or IYY')
+axis.set_xlabel('Number of Electrons')
+axis.set_ylim(1.5, 1.9)
+axis.set_xlim(0, 102000)
+axis.legend(loc='best', prop={'size':12}, numpoints=1)
+axis.grid('off', axis='both')
 
-xSize.legend(loc='best', prop={'size':12},numpoints=1)
 spotSizePlot.show()
-
+store.close()

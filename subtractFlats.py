@@ -3,13 +3,13 @@
 # You should 'setup pipe_test' to use it.
 # C. Walter 01/2014
 
-import math                 as math
-import numpy                as np
+#import math          as math
+import numpy          as np
+import pandas         as pd
+import itertools
 
-import lsst.afw.math        as afwMath
-import lsst.afw.image       as afwImg
-
-from astropy.table import Table
+import lsst.afw.math  as afwMath
+import lsst.afw.image as afwImg
 
 def submatrix(M,i,j):
     return M[i-1:i+2,j-1:j+2].ravel()
@@ -77,7 +77,7 @@ def processImage(maskedImage):
 
     horizCorrelation = (centerPixelCorrelation[1,0] + centerPixelCorrelation[1,2])/2.0
     vertCorrelation  = (centerPixelCorrelation[0,1] + centerPixelCorrelation[2,1])/2.0
-    return (np.mean(a), np.std(a), np.mean(b), np.std(b),horizCorrelation,vertCorrelation)
+    return (np.mean(a), np.std(a), np.mean(b),np.std(b),horizCorrelation,vertCorrelation)
 
 # Main Program
 def main():
@@ -87,6 +87,11 @@ def main():
 
     printLevel = 0
 
+    # Make a Panda hd5f data store and frame.
+    store = pd.HDFStore('flatData.h5', mode='w')
+    flats = pd.DataFrame(columns =
+        ('config', 'magnitude', 'numElectrons', 'PTC', 'groupPTC', 'hCorr', 'vCorr'))
+ 
     # Setup global statistics and filenames    
     statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
     afwMath.MIN | afwMath.ERRORS)
@@ -100,68 +105,56 @@ def main():
     magnitude = [18, 15, 14, 13, 12, 10]
     extraId   = ['0', '1', '2', '3', '4']
 
-    # Create 2D arrays the PTC and Correlation coefficients for plotting
-    mean     = np.zeros((len(extraId),len(magnitude)))
-    PTC      = np.zeros_like(mean)
-    groupPTC = np.zeros_like(mean)
-    hCorr    = np.zeros_like(mean)
-    vCorr    = np.zeros_like(mean)
+    # Loop over the set of files in electron intensity and BF effect strength
+    for (j, i) in itertools.product(extraId, magnitude):
 
-    for (j, fileId) in enumerate(extraId):
-        for (i, fileMag) in enumerate(magnitude):
+        fileName1 = "%s%02d%1d%s%s" % (outDir, i, 0, j, suffix)
+        fileName2 = "%s%02d%1d%s%s" % (outDir, i, 1, j, suffix)
 
-            fileName1 = "%s%02d%1d%s%s" % (outDir, fileMag, 0, fileId, suffix)
-            fileName2 = "%s%02d%1d%s%s" % (outDir, fileMag, 1, fileId, suffix)
+        # Get images
+        maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
+        maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
+        maskedImage3 = maskedImage1.clone()
+        maskedImage3 -= maskedImage2
 
-            # Get images
-            maskedImage1 = afwImg.ExposureF(fileName1).getMaskedImage()
-            maskedImage2 = afwImg.ExposureF(fileName2).getMaskedImage()
-            maskedImage3 = maskedImage1.clone()
-            maskedImage3 -= maskedImage2
+        # Process images
+        if printLevel >= 1: print "Processing file ", fileName1
+        (mean1,std1,groupMean1,groupStd1,hCorr1,vCorr1) = processImage(maskedImage1)
+        if printLevel >= 1: print "Processing file ", fileName2
+        (mean2,std2,groupMean2,groupStd2,hCorr2,vCorr2) = processImage(maskedImage2)
+        if printLevel >= 1: print "Processing Difference"
+        (mean3, std3, groupMean3,groupStd3,hCorr3,vCorr3) = processImage(maskedImage3)
 
-            # Process images
-            if printLevel >= 1: print "Processing file ", fileName1
-            (mean1,std1,groupMean1,groupStd1,hCorr1,vCorr1) = processImage(maskedImage1)
-            if printLevel >= 1: print "Processing file ", fileName2
-            (mean2,std2,groupMean2,groupStd2,hCorr2,vCorr2) = processImage(maskedImage2)
-            if printLevel >= 1: print "Processing Difference"
-            (mean3, std3, groupMean3,groupStd3,hCorr3,vCorr3) = processImage(maskedImage3)
+        #Calculate PTC entry (Mean/Variance)
+        PTC1      = mean1/std1**2
+        PTC3      = (mean1+mean2)/std3**2
+        groupPTC1 = groupMean1/groupStd1**2
+        groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
 
-            #Calculate PTC entry (Mean/Variance)
-            PTC1      = mean1/std1**2
-            PTC3      = (mean1+mean2)/std3**2
-            groupPTC1 = groupMean1/groupStd1**2
-            groupPTC3 = (groupMean1+groupMean2)/groupStd3**2
+        # Print results
+        if printLevel >= 1:
+            print "\n---Results for magnitude", i, "config", j,":\n"
 
-            # Print results
-            if printLevel >= 1:
-                print "\n---Results for magnitude", i, "config", j,":\n"
+            print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
+            print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
 
-                print "Image1:\t %9.2f %9.2f %7.2f   "% (mean1, std1, PTC1)
-                print "Image3:\t %9.2f %9.2f %7.2f \n"% (mean3, std3, PTC3)
+            print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
+            print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
 
-                print "Group1:\t %9.2f %9.2f %7.2f   "% (groupMean1, groupStd1, groupPTC1)
-                print "Group3:\t %9.2f %9.2f %7.2f \n"% (groupMean3, groupStd3, groupPTC3)
+            print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
+            print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
+            print
 
-                print "Correlation1:\t %9.3f %9.3f"% (hCorr1, vCorr1)
-                print "Correlation3:\t %9.3f %9.3f"% (hCorr3, vCorr3)
-                print
+        # Print Summary Line for this set of files
+        print "%d %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
+        (i, j, mean1, std1, PTC1, hCorr1, vCorr1, PTC3, hCorr3, vCorr3)
 
-            # Print Summary Line for this set of files
-            print "%d %s %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
-            (fileMag, fileId, mean1, std1, PTC1, hCorr1, vCorr1, PTC3, hCorr3, vCorr3)
+        # Fill the Pandas data frame
+        flats.loc[ len(flats) ] = (j, i, mean1, PTC3, groupPTC3, hCorr3, vCorr3)
 
-            # For Plotting
-            mean[j][i]     = mean1
-            PTC[j][i]      = PTC3
-            groupPTC[j][i] = groupPTC3
-            hCorr[j][i]    = hCorr3
-            vCorr[j][i]    = vCorr3
-
-    # Save the output arrays to a Binary FITS File
-    dataTable = Table( [mean, PTC, groupPTC, hCorr, vCorr],
-                       names = ("numElectrons", "PTC", "groupPTC", "hCorr", "vCorr") )
-    dataTable.write('flatData.fits', overwrite=True)
+    # Write out the data store
+    store['flats'] = flats
+    store.close()
 
 if __name__ == "__main__":
     main()

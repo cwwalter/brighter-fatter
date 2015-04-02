@@ -16,18 +16,22 @@ def submatrix(M,i,j):
 
 def processImage(maskedImage):
 
-    # These three are held in the maskedImage
-    image       = maskedImage.getImage()
-    mask        = maskedImage.getMask()
-    variance    = maskedImage.getVariance()
+    # We want to remove the edges because of roll-off effects
+    # Trim 20 pixels from outside
+    trimmedImage = maskedImage[20:-20, 20:-20]
     
-    imageStatistics = afwMath.makeStatistics(maskedImage, statFlags)
+    # These three are held in the maskedImage
+    image       = trimmedImage.getImage()
+    mask        = trimmedImage.getMask()
+    variance    = trimmedImage.getVariance()
+    
+    imageStatistics = afwMath.makeStatistics(trimmedImage, statFlags)
     numBins         = imageStatistics.getResult(afwMath.NPOINT)[0]
     mean            = imageStatistics.getResult(afwMath.MEAN)[0]
 
     if printLevel >= 2:    
         print "The image has dimensions %i x %i pixels" \
-            %(maskedImage.getWidth(), maskedImage.getHeight())
+            %(trimmedImage.getWidth(), trimmedImage.getHeight())
         print "Number of analyzed bins in image is %i"  %numBins
         print "Max    = %9d"            %imageStatistics.getResult(afwMath.MAX)[0]
         print "Min    = %9d"            %imageStatistics.getResult(afwMath.MIN)[0]
@@ -35,11 +39,6 @@ def processImage(maskedImage):
         print "StdDev = %9.2f"          %imageStatistics.getResult(afwMath.STDEV)[0]
 
     a = image.getArray().T
-
-    # We want to remove the edges because of the way the charge sharing is working now.
-    # Trim 20 pixels from outside
-    trim = 20
-    a = a[trim:-trim,trim:-trim]
     
     if printLevel >= 2:        
         print "\nCalculate 2D spatial Autocorrelation"
@@ -77,7 +76,9 @@ def processImage(maskedImage):
 
     horizCorrelation = (centerPixelCorrelation[1,0] + centerPixelCorrelation[1,2])/2.0
     vertCorrelation  = (centerPixelCorrelation[0,1] + centerPixelCorrelation[2,1])/2.0
-    return (np.mean(a), np.std(a), np.mean(b),np.std(b),horizCorrelation,vertCorrelation)
+
+    return (np.mean(a), np.std(a), np.mean(b), np.std(b),
+            horizCorrelation, vertCorrelation)
 
 # Main Program
 def main():

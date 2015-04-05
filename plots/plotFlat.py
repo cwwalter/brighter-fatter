@@ -30,8 +30,8 @@ def plotFrameVariable(dataFrame, title, variable, yLabel, yLim):
 # Main Program
 def main():
 
-    store = pd.HDFStore('flatData.h5')
-    flats = store['flats']
+    h5store = pd.HDFStore('flatData.h5')
+    flats   = h5store['flats']
     
     plotFrameVariable(flats, 'PTC Curve for simulated flats',
                 'PTC', 'Mean / Variance', (0.0, 2.8) )
@@ -45,7 +45,7 @@ def main():
     plotFrameVariable(flats, 'Vertical Autocorrelation Coefficients',
                 'vCorr', 'Autocorrelation Coefficient', (-0.1, 0.15) )
 
-    store.close()
+    h5store.close()
     
 if __name__ == "__main__":
     main()

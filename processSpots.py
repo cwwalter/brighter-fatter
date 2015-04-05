@@ -20,9 +20,9 @@ printLevel = 0
 pexLog.Log.getDefaultLog().setThreshold(pexLog.Log.WARN)
 
 # Make a Panda hd5f data store and frame.
-store  = pd.HDFStore('spotData.h5', mode='w')
-spots = pd.DataFrame(columns = ('config', 'numElectrons',
-                               'ixx', 'errxx', 'iyy', 'erryy', 'stdx', 'stdy'))
+h5store = pd.HDFStore('spotData.h5', mode='w')
+spots   = pd.DataFrame(columns = ('config', 'numElectrons',
+                        'ixx', 'errxx', 'iyy', 'erryy', 'stdx', 'stdy'))
 
 # File info
 outDir       = 'output/lsst_e_'
@@ -167,5 +167,5 @@ for (j, i) in itertools.product(extraId, electronLevel):
     spots.loc[ len(spots) ] = (j, i, ixx, errxx, iyy, erryy, stdx, stdy)
     
 # Write out the data store
-store['spots'] = spots
-store.close()
+h5store['spots'] = spots
+h5store.close()

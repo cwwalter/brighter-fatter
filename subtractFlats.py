@@ -89,9 +89,9 @@ def main():
     printLevel = 0
 
     # Make a Panda hd5f data store and frame.
-    store = pd.HDFStore('flatData.h5', mode='w')
-    flats = pd.DataFrame(columns =
-        ('config', 'magnitude', 'numElectrons', 'PTC', 'groupPTC', 'hCorr', 'vCorr'))
+    h5store = pd.HDFStore('flatData.h5', mode='w')
+    flats   = pd.DataFrame(columns =
+            ('config', 'magnitude', 'numElectrons', 'PTC', 'groupPTC', 'hCorr', 'vCorr'))
  
     # Setup global statistics and filenames    
     statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX | 
@@ -154,8 +154,8 @@ def main():
         flats.loc[ len(flats) ] = (j, i, mean1, PTC3, groupPTC3, hCorr3, vCorr3)
 
     # Write out the data store
-    store['flats'] = flats
-    store.close()
+    h5store['flats'] = flats
+    h5store.close()
 
 if __name__ == "__main__":
     main()

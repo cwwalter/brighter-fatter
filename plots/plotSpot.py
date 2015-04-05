@@ -1,8 +1,8 @@
 import matplotlib.pyplot  as plt
 import pandas as pd
 
-store = pd.HDFStore('spotData.h5')
-spots = store['spots']
+h5store = pd.HDFStore('spotData.h5')
+spots   = h5store['spots']
 
 spotSizePlot, (xPlot, yPlot) = plt.subplots(2,1)
 spotSizePlot.suptitle('Standard Deviation in X and Y directions')
@@ -39,4 +39,4 @@ yPlot.grid('off', axis='both')
 yPlot.legend(loc=(.82,.5), prop={'size':9}, numpoints=1)
 
 spotSizePlot.show()
-store.close()
+h5store.close()

@@ -157,7 +157,7 @@ def main():
             print
 
         # Print Summary Line for this set of files
-        print "%d %d %8.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
+        print "%d %d %9.2f %7.2f %7.2f %9.3f %9.3f %7.2f %9.3f %9.3f" % \
             (i, j, mean1, std1, PTC1, hCorr1, vCorr1, PTC3, hCorr3, vCorr3)
 
         # Fill the Pandas data frame

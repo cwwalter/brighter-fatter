@@ -1,11 +1,11 @@
-import matplotlib.pyplot  as plt
+import matplotlib.pyplot as plt
 import pandas as pd
 
 h5store = pd.HDFStore('spotData.h5')
-spots   = h5store['spots']
+spots = h5store['spots']
 
-spotSizePlot, (xPlot, yPlot) = plt.subplots(2,1)
-spotSizePlot.suptitle('Standard Deviation in X and Y directions')
+spotSizePlot, (xPlot, yPlot) = plt.subplots(2, 1)
+spotSizePlot.suptitle('Standard Deviation in X and Y directions', fontsize=15)
 
 config0 = spots.query('config==0')
 config1 = spots.query('config==1')
@@ -25,18 +25,19 @@ config2.plot('numElectrons', 'iyy', yerr='erryy', fmt='bo', ax=yPlot, label='x10
 config3.plot('numElectrons', 'iyy', yerr='erryy', fmt='co', ax=yPlot, label='x100')
 config4.plot('numElectrons', 'iyy', yerr='erryy', fmt='yo', ax=yPlot, label='x500')
 
+xPlot.set_xlabel('')
 xPlot.set_ylabel('Sigma X')
-xPlot.set_xlim(0,102000)
-xPlot.set_ylim(1.5,1.9)
-xPlot.grid('off', axis='both')
+xPlot.set_xlim(0, 102000)
+xPlot.set_ylim(1.5, 1.9)
+# xPlot.grid('off', axis='both')
 xPlot.legend().remove()
 
 yPlot.set_xlabel('Number of Electrons')
 yPlot.set_ylabel('Sigma Y')
-yPlot.set_xlim(0,102000)
-yPlot.set_ylim(1.5,1.9)
-yPlot.grid('off', axis='both')
-yPlot.legend(loc=(.82,.5), prop={'size':9}, numpoints=1)
+yPlot.set_xlim(0, 102000)
+yPlot.set_ylim(1.5, 1.9)
+# yPlot.grid('off', axis='both')
+yPlot.legend(loc=(.82, .5), prop={'size': 9}, numpoints=1)
 
 spotSizePlot.show()
 h5store.close()

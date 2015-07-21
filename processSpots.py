@@ -20,9 +20,14 @@ import lsst.pex.logging as pexLog
 printLevel = 0
 pexLog.Log.getDefaultLog().setThreshold(pexLog.Log.WARN)
 
+# Turn off warning due to reading in an image into an Exposure
+# This should be temporary until DM fixes this particular issue.
+# https://jira.lsstcorp.org/browse/DM-3191
+pexLog.Log.getDefaultLog().setThresholdFor("afw.image.MaskedImage", pexLog.Log.FATAL)
+
 # Make a Panda hd5f data store and frame.
 h5store = pd.HDFStore('spotData.h5', mode='w')
-spots = pd.DataFrame(columns=('config', 'numElectrons',
+spots = pd.DataFrame(columns=('config', 'numElectrons', 'maxValue',
                      'ixx', 'errxx', 'iyy', 'erryy', 'stdx', 'stdy'))
 
 # File info
@@ -31,7 +36,8 @@ suffix = '_f2_R22_S11_E000.fits.gz'
 
 electronLevel = [1000, 2000, 3000, 4000, 5000,
                  10000, 15000, 20000, 25000, 30000,
-                 50000, 75000, 100000]
+                 50000, 75000, 100000, 200000, 500000, 750000,
+                 1000000, 1250000, 1500000, 1750000, 2000000]
 
 extraId = [0, 1, 2, 3, 4]
 
@@ -113,6 +119,7 @@ for (j, i) in itertools.product(extraId, electronLevel):
     imageStatistics = afwMath.makeStatistics(maskedImage, statFlags)
     numBins = imageStatistics.getResult(afwMath.NPOINT)[0]
     mean = imageStatistics.getResult(afwMath.MEAN)[0]
+    maxValue = imageStatistics.getResult(afwMath.MAX)[0]
 
     if printLevel >= 2:
         print "The image has dimensions %i x %i pixels" \
@@ -185,11 +192,11 @@ for (j, i) in itertools.product(extraId, electronLevel):
     variancex = np.average((xaxis - myaverage)**2, weights=xvalues)
     stdx = math.sqrt(variancex)
 
-    print ("ID:%1d Electrons= %6s STDX= %4.2f STDY= %4.2f IXX= %4.2f "
+    print ("ID:%1d Electrons= %7s STDX= %4.2f STDY= %4.2f IXX= %4.2f "
            "IYY= %4.2f IXY= %4.2f") % (j, i, stdx, stdy, ixx, iyy, ixy)
 
     # Fill the Pandas data frame
-    spots.loc[len(spots)] = (j, i, ixx, errxx, iyy, erryy, stdx, stdy)
+    spots.loc[len(spots)] = (j, i, maxValue, ixx, errxx, iyy, erryy, stdx, stdy)
 
 # Write out the data store
 h5store['spots'] = spots

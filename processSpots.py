@@ -62,6 +62,7 @@ measureSourcesConfig.slots.psfFlux = None
 measureSourcesConfig.slots.apFlux = None
 measureSourcesConfig.slots.modelFlux = None
 measureSourcesConfig.slots.instFlux = None
+measureSourcesConfig.slots.calibFlux = None
 measureSourcesConfig.validate()
 
 # Setup the detection and measurement tasks

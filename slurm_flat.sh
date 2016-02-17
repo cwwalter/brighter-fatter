@@ -1,0 +1,70 @@
+#!/bin/bash
+# Job name:
+#SBATCH --job-name=BF-flats
+#
+# Partition:
+#SBATCH --partition=shared
+#
+# CPUs
+#SBATCH --ntasks=1
+#SBATCH --nodes=1
+#
+# Wall clock limit:
+#SBATCH --time=20:00:00
+#
+# Output
+#SBATCH --output=logs/flat-%a-dev_charge_sharing.log
+#SBATCH --error=logs/flat-%a-dev_charge_sharing.log
+#
+# Array
+#SBATCH --array=5-12
+#
+## Command(s) to run:
+
+phosimdir=/global/u1/c/cwalter/PhoSim/phosim
+workdir=/global/u1/c/cwalter/brighter-fatter
+
+Initialdir=$phosimdir
+Executable=$phosimdir/phosim
+
+# Set the command file; First no effects
+COMMAND_DIR=command-files
+COMMAND_FILE=dev_charge_sharing
+
+# We need to set the source file depending on the array numbrer
+SOURCE_DIR=sources
+
+case $SLURM_ARRAY_TASK_ID in
+    1) SOURCE_FILE=flat10_0 ;; 
+    2) SOURCE_FILE=flat10_1 ;;
+    3) SOURCE_FILE=flat12_0 ;;
+    4) SOURCE_FILE=flat12_1 ;;
+    5) SOURCE_FILE=flat13_0 ;;
+    6) SOURCE_FILE=flat13_1 ;;
+    7) SOURCE_FILE=flat14_0 ;;
+    8) SOURCE_FILE=flat14_1 ;;
+    9) SOURCE_FILE=flat15_0 ;;
+    10) SOURCE_FILE=flat15_1 ;;
+    11) SOURCE_FILE=flat18_0 ;;
+    12) SOURCE_FILE=flat18_1 ;;
+    *)
+	echo "TASK_ID not defined!"
+	exit
+esac
+	
+SOURCE=$workdir/$SOURCE_DIR/$SOURCE_FILE
+COMMANDS=$workdir/$COMMAND_DIR/$COMMAND_FILE
+OPTIONS='-s R22_S11 -e 0 -i lsst_flats'
+
+Arguments="$SOURCE $OPTIONS -c $COMMANDS -w $workdir/work_flat -o $workdir/output"
+
+echo RUN ON `date`
+echo
+echo EXECUTABLE: $Executable
+echo SOURCE: $SOURCE
+echo OPTIONS: $OPTIONS
+echo
+echo FULL COMMAND: $Executable $Arguments
+
+cd $Initialdir
+/usr/bin/time -p $Executable $Arguments

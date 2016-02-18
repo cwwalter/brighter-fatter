@@ -10,14 +10,14 @@
 #SBATCH --nodes=1
 #
 # Wall clock limit:
-#SBATCH --time=20:00:00
+#SBATCH --time=21:00:00
 #
 # Output
-#SBATCH --output=logs/flat-%a-dev_charge_sharing.log
-#SBATCH --error=logs/flat-%a-dev_charge_sharing.log
+#SBATCH --output=logs/flat-%a.log
+#SBATCH --error=logs/flat-%a.log
 #
 # Array
-#SBATCH --array=5-12
+#SBATCH --array=5-12,105-112
 #
 ## Command(s) to run:
 
@@ -27,14 +27,21 @@ workdir=/global/u1/c/cwalter/brighter-fatter
 Initialdir=$phosimdir
 Executable=$phosimdir/phosim
 
-# Set the command file; First no effects
+# Set the command file (upper third digit)
 COMMAND_DIR=command-files
-COMMAND_FILE=dev_charge_sharing
 
-# We need to set the source file depending on the array numbrer
+case $((SLURM_ARRAY_TASK_ID/100)) in
+    0) COMMAND_FILE=perfect_seeing ;;
+    1) COMMAND_FILE=dev_charge_sharing ;;
+    *)
+	echo "Command File not defined!"
+	exit
+esac
+
+# Set the source file depending on the array number (lowest two digits)
 SOURCE_DIR=sources
 
-case $SLURM_ARRAY_TASK_ID in
+case $((SLURM_ARRAY_TASK_ID%100)) in
     1) SOURCE_FILE=flat10_0 ;; 
     2) SOURCE_FILE=flat10_1 ;;
     3) SOURCE_FILE=flat12_0 ;;
@@ -62,6 +69,7 @@ echo RUN ON `date`
 echo
 echo EXECUTABLE: $Executable
 echo SOURCE: $SOURCE
+echo COMMANDS: $COMMANDS
 echo OPTIONS: $OPTIONS
 echo
 echo FULL COMMAND: $Executable $Arguments

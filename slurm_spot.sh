@@ -18,9 +18,8 @@
 #
 # Array
 #SBATCH --array=1-21,101-121
-#
-## Command(s) to run:
 
+# Set directories
 phosimdir=/global/u1/c/cwalter/PhoSim/phosim
 workdir=/global/u1/c/cwalter/brighter-fatter
 

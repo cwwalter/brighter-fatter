@@ -10,14 +10,14 @@
 #SBATCH --nodes=1
 #
 # Wall clock limit:
-#SBATCH --time=21:00:00
+#SBATCH --time=48:00:00
 #
 # Output
 #SBATCH --output=logs/flat-%a.log
 #SBATCH --error=logs/flat-%a.log
 #
 # Array
-#SBATCH --array=5-12,105-112
+#SBATCH --array=1-14,101-114
 
 # Set directories
 phosimdir=/global/u1/c/cwalter/PhoSim/phosim
@@ -43,16 +43,18 @@ SOURCE_DIR=sources
 case $((SLURM_ARRAY_TASK_ID%100)) in
     1) SOURCE_FILE=flat10_0 ;; 
     2) SOURCE_FILE=flat10_1 ;;
-    3) SOURCE_FILE=flat12_0 ;;
-    4) SOURCE_FILE=flat12_1 ;;
-    5) SOURCE_FILE=flat13_0 ;;
-    6) SOURCE_FILE=flat13_1 ;;
-    7) SOURCE_FILE=flat14_0 ;;
-    8) SOURCE_FILE=flat14_1 ;;
-    9) SOURCE_FILE=flat15_0 ;;
-    10) SOURCE_FILE=flat15_1 ;;
-    11) SOURCE_FILE=flat18_0 ;;
-    12) SOURCE_FILE=flat18_1 ;;
+    3) SOURCE_FILE=flat11_0 ;;
+    4) SOURCE_FILE=flat11_1 ;;
+    5) SOURCE_FILE=flat12_0 ;;
+    6) SOURCE_FILE=flat12_1 ;;
+    7) SOURCE_FILE=flat13_0 ;;
+    8) SOURCE_FILE=flat13_1 ;;
+    9) SOURCE_FILE=flat14_0 ;;
+    10) SOURCE_FILE=flat14_1 ;;
+    11) SOURCE_FILE=flat15_0 ;;
+    12) SOURCE_FILE=flat15_1 ;;
+    13) SOURCE_FILE=flat18_0 ;;
+    14) SOURCE_FILE=flat18_1 ;;
     *)
 	echo "TASK_ID not defined!"
 	exit

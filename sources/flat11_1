@@ -13,12 +13,12 @@ Opsim_sunalt -90
 Opsim_filter 2
 Opsim_dist2moon 180.0
 Opsim_moonphase 10.0
-Opsim_obshistid 101
+Opsim_obshistid 141
 Opsim_rawseeing 0.67
 SIM_SEED     2000
 SIM_MINSOURCE 0
 SIM_TELCONFIG 2
-SIM_DOMEINT 10.4
+SIM_DOMEINT 11.0
 SIM_DOMEWAVE 550.0
 SIM_CAMCONFIG 1
 SIM_VISTIME 15.0

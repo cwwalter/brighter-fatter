@@ -22,6 +22,7 @@
 # Set directories
 phosimdir=/global/u1/c/cwalter/PhoSim/phosim
 workdir=/global/u1/c/cwalter/brighter-fatter
+outputdir=/global/cscratch1/sd/cwalter/brighter-fatter
 
 Initialdir=$phosimdir
 Executable=$phosimdir/phosim
@@ -63,8 +64,8 @@ esac
 SOURCE=$workdir/$SOURCE_DIR/$SOURCE_FILE
 COMMANDS=$workdir/$COMMAND_DIR/$COMMAND_FILE
 OPTIONS='-s R22_S11 -e 0 -i lsst_flats'
-
-Arguments="$SOURCE $OPTIONS -c $COMMANDS -w $workdir/work_flat -o $workdir/output"
+OUTPUT="-w $outputdir/work_flat -o $outputdir/output"
+Arguments="$SOURCE $OPTIONS -c $COMMANDS $OUTPUT"
 
 echo RUN ON `date`
 echo

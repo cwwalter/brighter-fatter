@@ -13,7 +13,7 @@ Opsim_sunalt -90
 Opsim_filter 2
 Opsim_dist2moon 180.0
 Opsim_moonphase 10.0
-Opsim_obshistid 140
+Opsim_obshistid 110
 Opsim_rawseeing 0.67
 SIM_SEED     1000
 SIM_MINSOURCE 0

@@ -23,7 +23,8 @@ pexLog.Log.getDefaultLog().setThreshold(pexLog.Log.WARN)
 # Turn off warning due to reading in an image into an Exposure
 # This should be temporary until DM fixes this particular issue.
 # https://jira.lsstcorp.org/browse/DM-3191
-pexLog.Log.getDefaultLog().setThresholdFor("afw.image.MaskedImage", pexLog.Log.FATAL)
+pexLog.Log.getDefaultLog().setThresholdFor("afw.image.MaskedImage",
+                                           pexLog.Log.FATAL)
 
 # Make a Panda hd5f data store and frame.
 h5store = pd.HDFStore('spotData.h5', mode='w')
@@ -39,7 +40,8 @@ electronLevel = [1000, 2000, 3000, 4000, 5000,
                  50000, 75000, 100000, 200000, 500000, 750000,
                  1000000, 1250000, 1500000, 1750000, 2000000]
 
-extraId = [0, 1, 2, 3, 4]
+# extraId = [0, 1, 2, 3, 4]
+extraId = [0, 1]
 
 # Set the statistics flags
 statFlags = (afwMath.NPOINT | afwMath.MEAN | afwMath.STDEV | afwMath.MAX |
@@ -53,7 +55,8 @@ detectSourcesConfig = measAlg.SourceDetectionConfig(thresholdType='value')
 measureSourcesConfig = measBase.SingleFrameMeasurementConfig()
 
 # Choose algorithms to use
-measureSourcesConfig.plugins.names = ["base_GaussianCentroid", "base_SdssShape"]
+measureSourcesConfig.plugins.names = ["base_GaussianCentroid",
+                                      "base_SdssShape"]
 measureSourcesConfig.slots.centroid = "base_GaussianCentroid"
 
 # Set flux aliases to None. This is necessary since by defualt these point at
@@ -98,8 +101,9 @@ for (j, i) in itertools.product(extraId, electronLevel):
     fileName = "%s%02d%d%s" % (outDir, i, j, suffix)
     exposure = afwImg.ExposureF(fileName)
 
-    # Add a Gaussian PSF to the exposure.  This is needed by the SDSS Centroid Algorithm.
-    # For the kernel make it 3*sigma on either side of the central pixel.
+    # Add a Gaussian PSF to the exposure.  This is needed by the SDSS Centroid
+    # Algorithm.  For the kernel make it 3*sigma on either side of the
+    # central pixel.
     sigma = 1.0
     size = 2*int(3*sigma) + 1
     gaussianPSF = measAlg.SingleGaussianPsf(size, size, sigma)
@@ -197,7 +201,8 @@ for (j, i) in itertools.product(extraId, electronLevel):
            "IYY= %4.2f IXY= %4.2f") % (j, i, stdx, stdy, ixx, iyy, ixy)
 
     # Fill the Pandas data frame
-    spots.loc[len(spots)] = (j, i, maxValue, ixx, errxx, iyy, erryy, stdx, stdy)
+    spots.loc[len(spots)] = (j, i, maxValue, ixx, errxx, iyy, erryy,
+                             stdx, stdy)
 
 # Write out the data store
 h5store['spots'] = spots

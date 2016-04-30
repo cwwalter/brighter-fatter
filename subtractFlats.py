@@ -9,6 +9,13 @@ import itertools
 
 import lsst.afw.math as afwMath
 import lsst.afw.image as afwImg
+import lsst.pex.logging as pexLog
+
+# Turn off warning due to reading in an image into an Exposure
+# This should be temporary until DM fixes this particular issue.
+# https://jira.lsstcorp.org/browse/DM-3191
+pexLog.Log.getDefaultLog().setThresholdFor("afw.image.MaskedImage",
+                                           pexLog.Log.FATAL)
 
 
 def submatrix(M, i, j):

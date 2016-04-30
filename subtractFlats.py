@@ -78,9 +78,11 @@ def processImage(maskedImage):
         print "4x4      Mean:", np.mean(b), "Std:", np.std(b)
         print
 
-    horizCorrelation = (centerPixelCorrelation[1, 0] + centerPixelCorrelation[1, 2]) / 2.0
+    horizCorrelation = (centerPixelCorrelation[1, 0] +
+                        centerPixelCorrelation[1, 2]) / 2.0
 
-    vertCorrelation = (centerPixelCorrelation[0, 1] + centerPixelCorrelation[2, 1]) / 2.0
+    vertCorrelation = (centerPixelCorrelation[0, 1] +
+                       centerPixelCorrelation[2, 1]) / 2.0
 
     return (np.mean(a), np.std(a), np.mean(b), np.std(b),
             horizCorrelation, vertCorrelation)
@@ -108,8 +110,8 @@ def main():
     suffix = '_f2_R22_S11_E000.fits.gz'
 
     # Process Files
-    magnitude = [18, 15, 14, 13, 12, 10]
-    extraId = [0, 1, 2, 3, 4]
+    magnitude = [18, 15, 14, 13, 12, 11]
+    extraId = [0, 1]
 
     # Loop over the set of files in electron intensity and BF effect strength
     for (j, i) in itertools.product(extraId, magnitude):
@@ -126,15 +128,18 @@ def main():
         # Process images
         if printLevel >= 1:
             print "Processing file ", fileName1
-        (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = processImage(maskedImage1)
+        (mean1, std1, groupMean1, groupStd1, hCorr1, vCorr1) = \
+            processImage(maskedImage1)
 
         if printLevel >= 1:
             print "Processing file ", fileName2
-        (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = processImage(maskedImage2)
+        (mean2, std2, groupMean2, groupStd2, hCorr2, vCorr2) = \
+            processImage(maskedImage2)
 
         if printLevel >= 1:
             print "Processing Difference"
-        (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = processImage(maskedImage3)
+        (mean3, std3, groupMean3, groupStd3, hCorr3, vCorr3) = \
+            processImage(maskedImage3)
 
         # Calculate PTC entry (Mean/Variance)
         PTC1 = mean1 / std1**2
@@ -149,8 +154,10 @@ def main():
             print "Image1:\t %9.2f %9.2f %7.2f   " % (mean1, std1, PTC1)
             print "Image3:\t %9.2f %9.2f %7.2f \n" % (mean3, std3, PTC3)
 
-            print "Group1:\t %9.2f %9.2f %7.2f   " % (groupMean1, groupStd1, groupPTC1)
-            print "Group3:\t %9.2f %9.2f %7.2f \n" % (groupMean3, groupStd3, groupPTC3)
+            print "Group1:\t %9.2f %9.2f %7.2f   " % (groupMean1, groupStd1,
+                                                      groupPTC1)
+            print "Group3:\t %9.2f %9.2f %7.2f \n" % (groupMean3, groupStd3,
+                                                      groupPTC3)
 
             print "Correlation1:\t %9.3f %9.3f" % (hCorr1, vCorr1)
             print "Correlation3:\t %9.3f %9.3f" % (hCorr3, vCorr3)

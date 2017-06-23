@@ -67,6 +67,7 @@ OPTIONS='-s R22_S11 -e 0 -i lsst_flats'
 OUTPUT="-w $outputdir/work_flat -o $outputdir/output"
 Arguments="$SOURCE $OPTIONS -c $COMMANDS $OUTPUT"
 
+echo JOB $SLURM_JOB_ID $SLURM_ARRAY_TASK_ID
 echo RUN ON `date`
 echo
 echo EXECUTABLE: $Executable
